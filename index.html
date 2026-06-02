@@ -617,13 +617,17 @@
 
                     <!-- Bottom Action Bar -->
                     <div class="bg-white/95 p-1.5 md:p-2 flex justify-center items-stretch shrink-0 border-t-2 border-slate-200 z-10 gap-2 h-16 md:h-20">
-                        <button id="p${p.index}-gen-btn" onclick="useGenerator(${p.index})" class="w-full bg-orange-400 hover:bg-orange-500 text-white font-bold py-1 px-2 rounded-xl shadow-md border-2 border-orange-300 active:scale-95 flex items-center justify-center gap-1 md:gap-2 transition">
+                        <button id="p${p.index}-gen-btn" onclick="useGenerator(${p.index})" class="flex-1 bg-orange-400 hover:bg-orange-500 text-white font-bold py-1 px-2 rounded-xl shadow-md border-2 border-orange-300 active:scale-95 flex items-center justify-center gap-1 md:gap-2 transition">
                             <img src="https://i.imgur.com/gwhNpoG.png" class="w-6 h-6 md:w-8 md:h-8 object-contain">
                             <div class="flex flex-col text-left leading-none">
                                 <span class="text-sm md:text-base tracking-wide">BELANJA</span>
                                 <span class="text-[10px] md:text-xs bg-orange-600 px-1 rounded inline-block w-max mt-0.5">-5 ENERGI</span>
                             </div>
                         </button>
+                        <div class="trash-zone w-16 md:w-20 bg-red-50 border-2 border-red-200 rounded-xl flex items-center justify-center shadow-inner transition-all flex-col gap-0.5 text-slate-500">
+                            <span class="text-xl md:text-2xl pointer-events-none">🗑️</span>
+                            <span class="text-[8px] md:text-[10px] font-bold pointer-events-none uppercase">Buang</span>
+                        </div>
                     </div>
                 </div>
             `;
@@ -852,7 +856,8 @@
                 oX: e.clientX - rect.left,
                 oY: e.clientY - rect.top,
                 hCell: null,
-                hOrder: null
+                hOrder: null,
+                hTrash: null
             });
             
             cloneEl.style.left = `${e.clientX - (e.clientX - rect.left)}px`;
@@ -873,10 +878,12 @@
             const targetQuadrant = elUnder ? elUnder.closest('.player-quadrant') : null;
             let newHCell = null;
             let newHOrder = null;
+            let newHTrash = null;
 
             if (targetQuadrant && parseInt(targetQuadrant.dataset.player) === drag.pIdx) {
                 newHCell = elUnder.closest('.grid-cell');
                 newHOrder = elUnder.closest('.order-card');
+                newHTrash = elUnder.closest('.trash-zone');
             }
             
             if (drag.hCell !== newHCell) {
@@ -890,6 +897,12 @@
                 if (newHOrder) newHOrder.classList.add('highlight-order');
                 drag.hOrder = newHOrder;
             }
+
+            if (drag.hTrash !== newHTrash) {
+                if (drag.hTrash) drag.hTrash.classList.remove('bg-red-200', 'border-red-400', 'scale-105', 'text-red-700');
+                if (newHTrash) newHTrash.classList.add('bg-red-200', 'border-red-400', 'scale-105', 'text-red-700');
+                drag.hTrash = newHTrash;
+            }
         }, {passive: false});
 
         document.addEventListener('pointerup', handlePointerEnd);
@@ -901,6 +914,7 @@
 
             if (drag.hCell) drag.hCell.classList.remove('highlight');
             if (drag.hOrder) drag.hOrder.classList.remove('highlight-order');
+            if (drag.hTrash) drag.hTrash.classList.remove('bg-red-200', 'border-red-400', 'scale-105', 'text-red-700');
 
             const elUnder = document.elementFromPoint(e.clientX, e.clientY);
 
@@ -910,6 +924,7 @@
             if (targetQuadrant && parseInt(targetQuadrant.dataset.player) === drag.pIdx) {
                 const targetOrder = elUnder.closest('.order-card');
                 const targetCell = elUnder.closest('.grid-cell');
+                const targetTrash = elUnder.closest('.trash-zone');
 
                 if (targetOrder) {
                     const orderIndex = parseInt(targetOrder.dataset.orderindex);
@@ -920,6 +935,10 @@
                     if (matchExists) fulfillOrderItem(drag.pIdx, orderIndex, drag.sIdx, e.clientX, e.clientY);
                     else renderBoard(drag.pIdx); 
                 } 
+                else if (targetTrash) {
+                    p.boardData[drag.sIdx] = null;
+                    renderBoard(drag.pIdx);
+                }
                 else if (targetCell) {
                     const targetIndex = parseInt(targetCell.dataset.index);
                     processDrop(drag.pIdx, drag.sIdx, targetIndex);
