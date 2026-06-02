@@ -141,92 +141,95 @@
     </main>
 
     <!-- Start Menu / Lobby -->
-    <div id="start-screen" class="fixed inset-0 bg-slate-800/80 backdrop-blur-md flex flex-col lg:flex-row justify-center items-center z-[100] p-4 md:p-12 gap-8 lg:gap-16 overflow-y-auto">
-        
-        <!-- Kiri: Logo & Narasi -->
-        <div class="flex flex-col items-center lg:items-start text-center lg:text-left max-w-sm md:max-w-md w-full shrink-0">
-            <img src="https://i.imgur.com/X5S3Ilb.png" alt="Dapur Literasi Numerasi" class="w-48 md:w-64 mb-6 drop-shadow-2xl hover:scale-105 transition duration-500 object-contain">
-            <h1 class="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg leading-tight">Dapur Literasi<br><span class="text-yellow-300">Numerasi</span></h1>
-            <p class="text-white text-base md:text-lg mb-6 drop-shadow-md font-medium leading-relaxed bg-black/30 p-5 rounded-2xl border border-white/20">
-                "Selamat datang! Mari asah kemampuan membaca dan berhitungmu sambil mengelola dapur impian. Berkompetisilah bersama temanmu secara real-time dan kumpulkan uang paling banyak!"
-            </p>
-            <p class="text-white text-sm md:text-base bg-blue-600/90 px-6 py-2.5 rounded-full border border-blue-400 font-bold tracking-wide shadow-lg inline-block">
-                🎮 Mode Papan Interaktif (IFP)
-            </p>
-        </div>
-        
-        <!-- Kanan: Menu Panel -->
-        <div class="bg-white text-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl max-w-xl w-full flex flex-col gap-6 relative border-b-8 border-slate-200 shrink-0">
+    <div id="start-screen" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex justify-center items-center z-[100] p-4 md:p-8 overflow-y-auto">
+        <div class="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 my-auto">
             
-            <button onclick="openPanduan()" class="absolute -top-5 -right-5 bg-indigo-500 text-white hover:bg-indigo-600 rounded-full py-3 px-6 font-bold transition flex items-center gap-2 shadow-xl border-4 border-white text-sm z-10">
-                📖 Panduan
-            </button>
-
-            <!-- Dropdowns Row -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-2 md:mt-0">
-                    <h3 class="font-bold text-sm md:text-base mb-2 text-blue-600 text-center uppercase tracking-wide">Jumlah Pemain</h3>
-                    <div class="relative">
-                        <select id="select-players" onchange="handlePlayerSelect()" class="w-full bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 text-slate-700 font-bold py-3 px-4 rounded-xl outline-none focus:border-blue-500 text-center appearance-none cursor-pointer transition shadow-inner">
-                            <option value="1">Solo (1 Pemain)</option>
-                            <option value="2">2 Pemain</option>
-                            <option value="3">3 Pemain</option>
-                            <option value="4">4 Pemain</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-600">
-                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dropdown: Jenjang Pendidikan -->
-                <div>
-                    <h3 class="font-bold text-sm md:text-base mb-2 text-blue-600 text-center uppercase tracking-wide">Jenjang Kelas</h3>
-                    <div class="relative">
-                        <select id="select-jenjang" onchange="setJenjang(this.value)" class="w-full bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 text-slate-700 font-bold py-3 px-4 rounded-xl outline-none focus:border-blue-500 text-center appearance-none cursor-pointer transition shadow-inner">
-                            <option value="SD">SD (Sederajat)</option>
-                            <option value="SMP">SMP (Sederajat)</option>
-                            <option value="SMA">SMA (Sederajat)</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-600">
-                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dropdown: Durasi -->
-                <div>
-                    <h3 class="font-bold text-sm md:text-base mb-2 text-blue-600 text-center uppercase tracking-wide">Durasi Bermain</h3>
-                    <div class="relative">
-                        <select id="select-duration" onchange="setDuration(parseInt(this.value))" class="w-full bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 text-slate-700 font-bold py-3 px-4 rounded-xl outline-none focus:border-blue-500 text-center appearance-none cursor-pointer transition shadow-inner">
-                            <option value="0">Tanpa Batas</option>
-                            <option value="10">10 Menit</option>
-                            <option value="15">15 Menit</option>
-                            <option value="30">30 Menit</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-600">
-                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                        </div>
-                    </div>
+            <!-- Kiri: Logo & Narasi -->
+            <div class="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left max-w-lg">
+                <img src="https://i.imgur.com/X5S3Ilb.png" alt="Dapur Literasi Numerasi" class="w-48 md:w-64 mb-6 drop-shadow-2xl hover:scale-105 transition duration-500 object-contain">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-lg leading-tight">Dapur Literasi<br><span class="text-yellow-300">Numerasi</span></h1>
+                <p class="text-white text-base md:text-lg mb-6 drop-shadow-md font-medium leading-relaxed bg-black/30 p-5 rounded-2xl border border-white/20 backdrop-blur-sm">
+                    "Selamat datang! Mari asah kemampuan membaca dan berhitungmu sambil mengelola dapur impian. Berkompetisilah bersama temanmu secara real-time dan kumpulkan uang paling banyak!"
+                </p>
+                <div class="inline-block bg-blue-600/90 px-6 py-2.5 rounded-full border border-blue-400 text-white font-bold tracking-wide shadow-lg">
+                    🎮 Mode Papan Interaktif (IFP)
                 </div>
             </div>
-
-            <!-- Nama Pemain Inputs -->
-            <div>
-                <h3 class="font-bold text-sm md:text-base mb-3 text-blue-600 text-center uppercase tracking-wide">Nama Pemain</h3>
-                <div id="names-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 justify-center">
-                    <!-- Inputs generated by JS -->
-                </div>
-            </div>
-
-            <!-- Play Button -->
-            <button onclick="startGame()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold text-2xl py-4 rounded-2xl shadow-[0_6px_0_#c2410c] transform transition active:translate-y-1 active:shadow-none mt-2 uppercase tracking-wider">
-                Mulai Bermain!
-            </button>
             
-            <!-- Developer Credit -->
-            <div class="mt-2 text-center text-slate-500 text-xs md:text-sm font-medium">
-                Ide Pengembang oleh: <span class="font-bold text-slate-700">Abdul Rahmat</span><br>
-                SDN 011 Balikpapan Tengah | No. Telp: 081351767574
+            <!-- Kanan: Menu Panel (Satu Kotak Rapi) -->
+            <div class="w-full max-w-md bg-white text-slate-800 p-6 md:p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative border-b-8 border-slate-200 flex flex-col gap-5">
+                
+                <button onclick="openPanduan()" class="absolute -top-4 -right-4 bg-indigo-500 text-white hover:bg-indigo-600 rounded-full py-2 px-6 font-bold transition shadow-xl border-4 border-white z-10 flex items-center gap-2 text-sm">
+                    📖 Panduan
+                </button>
+
+                <h2 class="text-2xl font-bold text-slate-800 text-center border-b-2 border-slate-100 pb-3">Pengaturan Permainan</h2>
+
+                <!-- Pengaturan Dasar (Dropdowns) -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="font-bold text-xs md:text-sm text-blue-600 uppercase tracking-wide mb-1.5 block">Jumlah Pemain</label>
+                        <div class="relative">
+                            <select id="select-players" onchange="handlePlayerSelect()" class="w-full bg-slate-50 border-2 border-slate-300 text-slate-700 font-bold py-2.5 px-4 rounded-xl outline-none focus:border-blue-500 appearance-none cursor-pointer transition shadow-sm">
+                                <option value="1">Solo (1 Pemain)</option>
+                                <option value="2">2 Pemain</option>
+                                <option value="3">3 Pemain</option>
+                                <option value="4">4 Pemain</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-600">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="font-bold text-xs md:text-sm text-blue-600 uppercase tracking-wide mb-1.5 block">Jenjang Kelas</label>
+                        <div class="relative">
+                            <select id="select-jenjang" onchange="setJenjang(this.value)" class="w-full bg-slate-50 border-2 border-slate-300 text-slate-700 font-bold py-2.5 px-4 rounded-xl outline-none focus:border-blue-500 appearance-none cursor-pointer transition shadow-sm">
+                                <option value="SD">SD (Sederajat)</option>
+                                <option value="SMP">SMP (Sederajat)</option>
+                                <option value="SMA">SMA (Sederajat)</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-600">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="font-bold text-xs md:text-sm text-blue-600 uppercase tracking-wide mb-1.5 block">Durasi Bermain</label>
+                        <div class="relative">
+                            <select id="select-duration" onchange="setDuration(parseInt(this.value))" class="w-full bg-slate-50 border-2 border-slate-300 text-slate-700 font-bold py-2.5 px-4 rounded-xl outline-none focus:border-blue-500 appearance-none cursor-pointer transition shadow-sm">
+                                <option value="0">Tanpa Batas</option>
+                                <option value="10">10 Menit</option>
+                                <option value="15">15 Menit</option>
+                                <option value="30">30 Menit</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-600">
+                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nama Pemain Inputs -->
+                <div class="border-t-2 border-slate-100 pt-3">
+                    <label class="font-bold text-xs md:text-sm text-blue-600 uppercase tracking-wide mb-2 block">Nama Pemain</label>
+                    <div id="names-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 justify-center">
+                        <!-- Inputs generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Play Button -->
+                <button onclick="startGame()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xl py-3.5 rounded-xl shadow-[0_5px_0_#c2410c] transform transition active:translate-y-1 active:shadow-none mt-2 uppercase tracking-wider">
+                    Mulai Bermain!
+                </button>
+                
+                <!-- Developer Credit -->
+                <div class="text-center text-slate-500 text-xs md:text-sm font-medium mt-1">
+                    Ide Pengembang oleh: <span class="font-bold text-slate-700">Abdul Rahmat</span><br>
+                    SDN 011 Balikpapan Tengah | No. Telp: 081351767574
+                </div>
             </div>
         </div>
     </div>
