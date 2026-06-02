@@ -461,6 +461,9 @@
             document.getElementById('start-screen').classList.add('hidden');
             
             // Filter Quiz DB based on Jenjang
+            // - SD memunculkan soal SD dan SD-SMP
+            // - SMP memunculkan soal SD-SMP, SMP, dan SMP-SMA
+            // - SMA memunculkan soal SMP-SMA dan SMA
             filteredQuizzes = ALL_QUIZZES.filter(q => {
                 if (startConfig.jenjang === 'SD') return q.lvl === 'SD' || q.lvl === 'SD-SMP';
                 if (startConfig.jenjang === 'SMP') return q.lvl === 'SD-SMP' || q.lvl === 'SMP' || q.lvl === 'SMP-SMA';
@@ -686,6 +689,140 @@
 
             if (p.energy < 5) {
                 setTimeout(() => openQuizModal(pIndex), 500);
+            }
+        }
+
+        // --- LEVEL PROGRESSION ---
+        function checkLevelProgression(pIndex) {
+            const p = globalState.players[pIndex];
+            if (p.hasWon || globalState.isGameOver) return;
+
+            if (p.coins >= 600 && p.level < 6) {
+                p.level = 6;
+                p.hasWon = true;
+                declareWinner(p);
+            } else if (p.coins >= 400 && p.level < 5) {
+                p.level = 5; p.maxOrders = 5;
+                replenishOrders(pIndex);
+            } else if (p.coins >= 300 && p.level < 4) {
+                p.level = 4; p.maxOrders = 5;
+                replenishOrders(pIndex);
+            } else if (p.coins >= 200 && p.level < 3) {
+                p.level = 3; p.maxOrders = 3;
+                replenishOrders(pIndex);
+            } else if (p.coins >= 100 && p.level < 2) {
+                p.level = 2; p.maxOrders = 3;
+                replenishOrders(pIndex);
+            }
+        }
+
+        // --- ORDERS ---
+        function replenishOrders(pIndex) {
+            const p = globalState.players[pIndex];
+            while (p.orders.length < p.maxOrders) {
+                generateSingleOrder(pIndex);
+            }
+        }
+
+        function generateSingleOrder(pIndex) {
+            const p = globalState.players[pIndex];
+            let itemsCount = p.level === 1 ? 1 : 2;
+            let allowedLevels = [1, 2];
+            if (p.level === 3 || p.level === 5) allowedLevels = [2, 3];
+            else if (p.level === 4) allowedLevels = [1, 2, 3];
+
+            const items = [];
+            for (let i = 0; i < itemsCount; i++) {
+                const chainNames = Object.keys(CHAINS);
+                const randomChain = chainNames[Math.floor(Math.random() * chainNames.length)];
+                const lvl = allowedLevels[Math.floor(Math.random() * allowedLevels.length)];
+                const requestedItem = CHAINS[randomChain].find(itm => itm.level === lvl);
+                items.push({
+                    reqId: requestedItem.id,
+                    reqImg: requestedItem.img,
+                    reward: lvl === 1 ? 5 : (lvl === 2 ? 15 : 40),
+                    isFulfilled: false
+                });
+            }
+
+            const avatars = ["https://i.imgur.com/VWV0nLj.png", "https://i.imgur.com/D1tEgEG.png", "https://i.imgur.com/OxAnopf.png", "https://i.imgur.com/CJMtN5w.png", "https://i.imgur.com/PvETFZH.png", "https://i.imgur.com/qiwyHIK.png"];
+            p.orders.push({
+                id: Date.now() + Math.random(),
+                avatar: avatars[Math.floor(Math.random() * avatars.length)],
+                items: items
+            });
+
+            renderOrders(pIndex);
+        }
+
+        function renderOrders(pIndex) {
+            const p = globalState.players[pIndex];
+            const container = document.getElementById(`p${pIndex}-orders`);
+            container.innerHTML = '';
+            
+            p.orders.forEach((order, idx) => {
+                const el = document.createElement('div');
+                el.className = 'order-card bg-white/95 border-2 border-indigo-200 p-2 md:p-3 rounded-2xl shadow-md flex items-center gap-2 md:gap-4 animate-pop cursor-default shrink-0 min-w-max';
+                el.dataset.orderindex = idx;
+                
+                let itemsHtml = '';
+                order.items.forEach(item => {
+                    if (item.isFulfilled) {
+                        itemsHtml += `
+                            <div class="relative w-12 h-12 md:w-16 md:h-16 opacity-30 grayscale shrink-0">
+                                <img src="${item.reqImg}" class="w-full h-full object-contain">
+                                <div class="absolute inset-0 flex justify-center items-center text-green-600 text-3xl md:text-4xl font-black z-10">✓</div>
+                            </div>
+                        `;
+                    } else {
+                        itemsHtml += `
+                            <div class="flex flex-col items-center shrink-0">
+                                <img src="${item.reqImg}" class="w-12 h-12 md:w-16 md:h-16 object-contain drop-shadow-md mb-1">
+                                <div class="flex items-center text-green-700 font-bold text-xs md:text-sm bg-green-100 px-2 rounded-md border border-green-300 py-0.5 shadow-inner">
+                                    ${item.reward} <img src="https://i.imgur.com/fNuQRvo.png" class="w-4 h-4 ml-1">
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                el.innerHTML = `
+                    <div class="w-14 h-14 md:w-20 md:h-20 bg-indigo-50 rounded-full border-4 border-indigo-100 overflow-hidden flex items-center justify-center shrink-0 shadow-sm">
+                        <img src="${order.avatar}" class="w-12 h-12 md:w-16 md:h-16 object-contain drop-shadow-sm">
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 border-l-2 border-indigo-50 pl-2">
+                        ${itemsHtml}
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        // --- RENDERING BOARD ---
+        function renderBoard(pIndex) {
+            const p = globalState.players[pIndex];
+            const boardEl = document.getElementById(`p${pIndex}-board`);
+            if(!boardEl) return;
+            boardEl.innerHTML = '';
+            
+            for (let i = 0; i < p.boardData.length; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell w-full h-full';
+                cell.dataset.index = i;
+                
+                const itemData = p.boardData[i];
+                if (itemData) {
+                    const el = document.createElement('div');
+                    el.className = `game-item animate-pop ${itemData.isDusty ? 'dusty' : ''}`;
+                    el.innerHTML = `<img src="${itemData.img}" class="w-[85%] h-[85%] object-contain pointer-events-none">`;
+                    el.style.backgroundColor = itemData.color;
+                    el.dataset.index = i;
+                    el.dataset.id = itemData.id;
+                    el.dataset.level = itemData.level;
+                    if (!itemData.isDusty) el.addEventListener('pointerdown', handlePointerDown);
+                    cell.appendChild(el);
+                }
+                boardEl.appendChild(cell);
             }
         }
 
