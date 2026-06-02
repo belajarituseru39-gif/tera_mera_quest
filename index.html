@@ -108,19 +108,6 @@
 
         .modal-overlay { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); }
         ::-webkit-scrollbar { display: none; }
-        
-        /* Turn-based Overlay */
-        .inactive-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(2px);
-            z-index: 40;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: inherit;
-        }
     </style>
 </head>
 <body class="w-screen h-screen flex flex-col bg-custom text-slate-800">
@@ -154,29 +141,29 @@
     </main>
 
     <!-- Start Menu / Lobby -->
-    <div id="start-screen" class="fixed inset-0 bg-slate-800/80 backdrop-blur-md flex flex-col justify-center items-center z-[100] p-4 overflow-y-auto">
-        <!-- Logo & Motivasi -->
-        <img src="https://i.imgur.com/X5S3Ilb.png" alt="Dapur Literasi Numerasi" class="h-28 md:h-36 mb-2 drop-shadow-2xl hover:scale-105 transition duration-500 object-contain">
+    <div id="start-screen" class="fixed inset-0 bg-slate-800/80 backdrop-blur-md flex flex-col lg:flex-row justify-center items-center z-[100] p-4 md:p-12 gap-8 lg:gap-16 overflow-y-auto">
         
-        <p class="text-white text-base md:text-lg text-center max-w-2xl px-4 mb-3 drop-shadow-md font-medium leading-tight">
-            "Selamat datang di Dapur Literasi Numerasi! Mari asah kemampuan membaca dan berhitungmu sambil mengelola dapur impian. Belajar jadi lebih seru dan bermakna!"
-        </p>
+        <!-- Kiri: Logo & Narasi -->
+        <div class="flex flex-col items-center lg:items-start text-center lg:text-left max-w-sm md:max-w-md w-full shrink-0">
+            <img src="https://i.imgur.com/X5S3Ilb.png" alt="Dapur Literasi Numerasi" class="w-48 md:w-64 mb-6 drop-shadow-2xl hover:scale-105 transition duration-500 object-contain">
+            <h1 class="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg leading-tight">Dapur Literasi<br><span class="text-yellow-300">Numerasi</span></h1>
+            <p class="text-white text-base md:text-lg mb-6 drop-shadow-md font-medium leading-relaxed bg-black/30 p-5 rounded-2xl border border-white/20">
+                "Selamat datang! Mari asah kemampuan membaca dan berhitungmu sambil mengelola dapur impian. Berkompetisilah bersama temanmu secara real-time dan kumpulkan uang paling banyak!"
+            </p>
+            <p class="text-white text-sm md:text-base bg-blue-600/90 px-6 py-2.5 rounded-full border border-blue-400 font-bold tracking-wide shadow-lg inline-block">
+                🎮 Mode Papan Interaktif (IFP)
+            </p>
+        </div>
         
-        <p class="text-white text-sm md:text-base mb-6 bg-blue-700/60 px-6 py-1.5 rounded-full border border-blue-400 font-medium tracking-wide">
-            Mode Papan Interaktif (IFP)
-        </p>
-        
-        <!-- Menu Panel -->
-        <div class="bg-white text-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl max-w-3xl w-full flex flex-col gap-6 relative border-b-8 border-slate-200">
+        <!-- Kanan: Menu Panel -->
+        <div class="bg-white text-slate-800 p-6 md:p-8 rounded-3xl shadow-2xl max-w-xl w-full flex flex-col gap-6 relative border-b-8 border-slate-200 shrink-0">
             
-            <button onclick="openPanduan()" class="absolute top-4 right-4 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 rounded-full py-2 px-4 font-bold transition flex items-center gap-2 shadow-sm text-sm">
+            <button onclick="openPanduan()" class="absolute -top-5 -right-5 bg-indigo-500 text-white hover:bg-indigo-600 rounded-full py-3 px-6 font-bold transition flex items-center gap-2 shadow-xl border-4 border-white text-sm z-10">
                 📖 Panduan
             </button>
 
             <!-- Dropdowns Row -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-4 md:mt-0">
-                <!-- Dropdown: Jumlah Pemain -->
-                <div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-2 md:mt-0">
                     <h3 class="font-bold text-sm md:text-base mb-2 text-blue-600 text-center uppercase tracking-wide">Jumlah Pemain</h3>
                     <div class="relative">
                         <select id="select-players" onchange="handlePlayerSelect()" class="w-full bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 text-slate-700 font-bold py-3 px-4 rounded-xl outline-none focus:border-blue-500 text-center appearance-none cursor-pointer transition shadow-inner">
@@ -424,20 +411,13 @@
             players: [],
             timeRemaining: 0,
             timerInterval: null,
-            isGameOver: false,
-            activePlayerIndex: 0
+            isGameOver: false
         };
 
         let activePlayerForQuiz = 0;
 
-        // Drag Engine State
-        let draggingEl = null;
-        let dragPlayerIndex = -1;
-        let dragSourceIndex = -1;
-        let dragOffsetX = 0;
-        let dragOffsetY = 0;
-        let highlightedCell = null;
-        let highlightedOrder = null;
+        // Multi-Touch Drag Engine State
+        const activeDrags = new Map();
 
         // --- START MENU LOGIC ---
         function initStartMenu() {
@@ -542,7 +522,6 @@
         function initializeGameData() {
             globalState.players = [];
             globalState.isGameOver = false;
-            globalState.activePlayerIndex = 0; // Turn system
 
             let gridCols = 6, gridRows = 5;
             if (startConfig.players > 1) {
@@ -580,8 +559,6 @@
                 renderBoard(p.index);
                 updateUI(p.index);
             });
-            
-            updateTurnVisuals();
 
             // Timer Setup
             if (startConfig.duration > 0) {
@@ -604,13 +581,6 @@
             const isColSpan = (startConfig.players === 3 && p.index === 2) ? 'col-span-2-custom' : '';
             return `
                 <div id="quadrant-${p.index}" class="player-quadrant flex flex-col h-full bg-white/50 backdrop-blur-sm rounded-2xl border-4 border-slate-300 shadow-lg relative overflow-hidden ${isColSpan}" data-player="${p.index}">
-                    
-                    <div id="overlay-${p.index}" class="inactive-overlay hidden">
-                        <div class="bg-white/90 px-6 py-4 rounded-2xl shadow-xl border-4 border-slate-300 text-center">
-                            <div class="text-4xl mb-2">⏳</div>
-                            <h3 class="text-xl font-bold text-slate-700">Menunggu Giliran</h3>
-                        </div>
-                    </div>
 
                     <!-- Player Header -->
                     <div class="bg-white/95 p-1.5 md:p-2 border-b-2 border-slate-200 flex justify-between items-center shrink-0 z-10">
@@ -646,59 +616,16 @@
 
                     <!-- Bottom Action Bar -->
                     <div class="bg-white/95 p-1.5 md:p-2 flex justify-center items-stretch shrink-0 border-t-2 border-slate-200 z-10 gap-2 h-16 md:h-20">
-                        <button id="p${p.index}-gen-btn" onclick="useGenerator(${p.index})" class="flex-1 bg-orange-400 hover:bg-orange-500 text-white font-bold py-1 px-2 rounded-xl shadow-md border-2 border-orange-300 active:scale-95 flex items-center justify-center gap-1 md:gap-2 transition">
+                        <button id="p${p.index}-gen-btn" onclick="useGenerator(${p.index})" class="w-full bg-orange-400 hover:bg-orange-500 text-white font-bold py-1 px-2 rounded-xl shadow-md border-2 border-orange-300 active:scale-95 flex items-center justify-center gap-1 md:gap-2 transition">
                             <img src="https://i.imgur.com/gwhNpoG.png" class="w-6 h-6 md:w-8 md:h-8 object-contain">
                             <div class="flex flex-col text-left leading-none">
                                 <span class="text-sm md:text-base tracking-wide">BELANJA</span>
                                 <span class="text-[10px] md:text-xs bg-orange-600 px-1 rounded inline-block w-max mt-0.5">-5 ENERGI</span>
                             </div>
                         </button>
-                        ${startConfig.players > 1 ? `
-                            <button onclick="passTurn()" class="flex-none bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-4 md:px-6 rounded-xl shadow-md border-2 border-blue-400 active:scale-95 transition flex flex-col justify-center items-center leading-tight">
-                                <span class="text-sm md:text-lg">SELESAI</span>
-                                <span class="text-[9px] md:text-xs font-normal">Ganti Giliran</span>
-                            </button>
-                        ` : ''}
                     </div>
                 </div>
             `;
-        }
-
-        // --- TURN BASED SYSTEM ---
-        function updateTurnVisuals() {
-            if (startConfig.players === 1) return;
-            globalState.players.forEach(p => {
-                const overlay = document.getElementById(`overlay-${p.index}`);
-                const quad = document.getElementById(`quadrant-${p.index}`);
-                const quizBtn = document.getElementById(`btn-quiz-${p.index}`);
-                
-                if (p.index === globalState.activePlayerIndex) {
-                    overlay.classList.add('hidden');
-                    quad.classList.remove('border-slate-300', 'opacity-90');
-                    quad.classList.add('border-green-500', 'shadow-[0_0_20px_rgba(74,222,128,0.5)]');
-                    quizBtn.disabled = false;
-                } else {
-                    overlay.classList.remove('hidden');
-                    quad.classList.remove('border-green-500', 'shadow-[0_0_20px_rgba(74,222,128,0.5)]');
-                    quad.classList.add('border-slate-300', 'opacity-90');
-                    quizBtn.disabled = true;
-                }
-            });
-        }
-
-        function passTurn() {
-            if (globalState.isGameOver) return;
-            globalState.activePlayerIndex = (globalState.activePlayerIndex + 1) % startConfig.players;
-            updateTurnVisuals();
-            
-            // Pop up to show next turn
-            const nextName = globalState.players[globalState.activePlayerIndex].name;
-            const turnMsg = document.createElement('div');
-            turnMsg.className = 'fixed inset-0 z-[300] flex justify-center items-center pointer-events-none bg-black/20';
-            turnMsg.innerHTML = `<div class="bg-blue-600 text-white text-4xl md:text-6xl font-bold py-6 px-12 rounded-3xl shadow-2xl animate-pop border-4 border-blue-300">Giliran ${nextName}!</div>`;
-            document.body.appendChild(turnMsg);
-            
-            setTimeout(() => { turnMsg.remove(); }, 1500);
         }
 
         // --- BOARD & LOGIC ---
@@ -729,7 +656,6 @@
 
         function useGenerator(pIndex) {
             if (globalState.isGameOver) return;
-            if (startConfig.players > 1 && pIndex !== globalState.activePlayerIndex) return; // Prevent click if not turn
             
             const p = globalState.players[pIndex];
             if (p.energy < 5) {
@@ -760,156 +686,20 @@
             }
         }
 
-        function checkLevelProgression(pIndex) {
-            const p = globalState.players[pIndex];
-            if (p.hasWon || globalState.isGameOver) return;
-
-            if (p.coins >= 600 && p.level < 6) {
-                p.level = 6;
-                p.hasWon = true;
-                declareWinner(p);
-            } else if (p.coins >= 400 && p.level < 5) {
-                p.level = 5; p.maxOrders = 5;
-                replenishOrders(pIndex);
-            } else if (p.coins >= 300 && p.level < 4) {
-                p.level = 4; p.maxOrders = 5;
-                replenishOrders(pIndex);
-            } else if (p.coins >= 200 && p.level < 3) {
-                p.level = 3; p.maxOrders = 3;
-                replenishOrders(pIndex);
-            } else if (p.coins >= 100 && p.level < 2) {
-                p.level = 2; p.maxOrders = 3;
-                replenishOrders(pIndex);
-            }
-        }
-
-        // --- ORDERS ---
-        function replenishOrders(pIndex) {
-            const p = globalState.players[pIndex];
-            while (p.orders.length < p.maxOrders) {
-                generateSingleOrder(pIndex);
-            }
-        }
-
-        function generateSingleOrder(pIndex) {
-            const p = globalState.players[pIndex];
-            let itemsCount = p.level === 1 ? 1 : 2;
-            let allowedLevels = [1, 2];
-            if (p.level === 3 || p.level === 5) allowedLevels = [2, 3];
-            else if (p.level === 4) allowedLevels = [1, 2, 3];
-
-            const items = [];
-            for (let i = 0; i < itemsCount; i++) {
-                const chainNames = Object.keys(CHAINS);
-                const randomChain = chainNames[Math.floor(Math.random() * chainNames.length)];
-                const lvl = allowedLevels[Math.floor(Math.random() * allowedLevels.length)];
-                const requestedItem = CHAINS[randomChain].find(itm => itm.level === lvl);
-                items.push({
-                    reqId: requestedItem.id,
-                    reqImg: requestedItem.img,
-                    reward: lvl === 1 ? 5 : (lvl === 2 ? 15 : 40),
-                    isFulfilled: false
-                });
-            }
-
-            const avatars = ["https://i.imgur.com/VWV0nLj.png", "https://i.imgur.com/D1tEgEG.png", "https://i.imgur.com/OxAnopf.png", "https://i.imgur.com/CJMtN5w.png", "https://i.imgur.com/PvETFZH.png", "https://i.imgur.com/qiwyHIK.png"];
-            p.orders.push({
-                id: Date.now() + Math.random(),
-                avatar: avatars[Math.floor(Math.random() * avatars.length)],
-                items: items
-            });
-
-            renderOrders(pIndex);
-        }
-
-        function renderOrders(pIndex) {
-            const p = globalState.players[pIndex];
-            const container = document.getElementById(`p${pIndex}-orders`);
-            container.innerHTML = '';
-            
-            p.orders.forEach((order, idx) => {
-                const el = document.createElement('div');
-                el.className = 'order-card bg-white border-2 border-indigo-100 p-2 md:p-3 rounded-2xl shadow-sm flex items-center gap-2 md:gap-3 animate-pop cursor-default shrink-0 min-w-max';
-                el.dataset.orderindex = idx;
-                
-                let itemsHtml = '';
-                order.items.forEach(item => {
-                    if (item.isFulfilled) {
-                        itemsHtml += `
-                            <div class="relative w-10 h-10 md:w-14 md:h-14 opacity-30 grayscale shrink-0">
-                                <img src="${item.reqImg}" class="w-full h-full object-contain">
-                                <div class="absolute inset-0 flex justify-center items-center text-green-600 text-3xl md:text-4xl font-black z-10">✓</div>
-                            </div>
-                        `;
-                    } else {
-                        itemsHtml += `
-                            <div class="flex flex-col items-center shrink-0">
-                                <img src="${item.reqImg}" class="w-10 h-10 md:w-14 md:h-14 object-contain drop-shadow-sm mb-1">
-                                <div class="flex items-center text-green-700 font-bold text-[10px] md:text-xs bg-green-100 px-1.5 md:px-2 rounded-md border border-green-200 leading-none py-0.5 md:py-1 mt-0.5">
-                                    ${item.reward} <img src="https://i.imgur.com/fNuQRvo.png" class="w-3 h-3 md:w-4 md:h-4 ml-0.5">
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-
-                el.innerHTML = `
-                    <div class="w-12 h-12 md:w-16 md:h-16 bg-indigo-50 rounded-full border border-indigo-100 overflow-hidden flex items-center justify-center shrink-0">
-                        <img src="${order.avatar}" class="w-10 h-10 md:w-14 md:h-14 object-contain drop-shadow-md">
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2 md:gap-3 pl-1 md:pl-2">
-                        ${itemsHtml}
-                    </div>
-                `;
-                container.appendChild(el);
-            });
-        }
-
-        // --- RENDERING BOARD ---
-        function renderBoard(pIndex) {
-            const p = globalState.players[pIndex];
-            const boardEl = document.getElementById(`p${pIndex}-board`);
-            boardEl.innerHTML = '';
-            
-            for (let i = 0; i < p.boardData.length; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'grid-cell w-full h-full';
-                cell.dataset.index = i;
-                
-                const itemData = p.boardData[i];
-                if (itemData) {
-                    const el = document.createElement('div');
-                    el.className = `game-item animate-pop ${itemData.isDusty ? 'dusty' : ''}`;
-                    el.innerHTML = `<img src="${itemData.img}" class="w-[85%] h-[85%] object-contain pointer-events-none">`;
-                    el.style.backgroundColor = itemData.color;
-                    el.dataset.index = i;
-                    el.dataset.id = itemData.id;
-                    el.dataset.level = itemData.level;
-                    if (!itemData.isDusty) el.addEventListener('pointerdown', handlePointerDown);
-                    cell.appendChild(el);
-                }
-                boardEl.appendChild(cell);
-            }
-        }
-
-        // --- DRAG AND DROP ---
+        // --- DRAG AND DROP (Multi-Touch IFP Ready) ---
         function handlePointerDown(e) {
             if (globalState.isGameOver) return;
-            if (e.button !== 0 && e.type !== 'touchstart') return;
+            if (e.button !== 0 && e.type !== 'touchstart' && e.type !== 'pointerdown') return;
             
             const quadrant = e.currentTarget.closest('.player-quadrant');
-            dragPlayerIndex = parseInt(quadrant.dataset.player);
+            if (!quadrant) return;
             
-            // Turn Check
-            if (startConfig.players > 1 && dragPlayerIndex !== globalState.activePlayerIndex) return;
-
-            draggingEl = e.currentTarget;
-            dragSourceIndex = parseInt(draggingEl.dataset.index);
+            const dragPlayerIndex = parseInt(quadrant.dataset.player);
+            const draggingEl = e.currentTarget;
+            const dragSourceIndex = parseInt(draggingEl.dataset.index);
             
             const rect = draggingEl.getBoundingClientRect();
-            dragOffsetX = e.clientX - rect.left;
-            dragOffsetY = e.clientY - rect.top;
-
+            
             draggingEl.style.position = 'fixed';
             draggingEl.style.zIndex = '1000';
             draggingEl.style.width = `${rect.width}px`;
@@ -917,93 +707,94 @@
             draggingEl.style.transition = 'none'; 
             
             document.body.appendChild(draggingEl);
-            updateDragPosition(e.clientX, e.clientY);
-
-            document.addEventListener('pointermove', handlePointerMove);
-            document.addEventListener('pointerup', handlePointerUp);
-            document.addEventListener('pointercancel', handlePointerUp);
+            
+            activeDrags.set(e.pointerId, {
+                el: draggingEl,
+                pIdx: dragPlayerIndex,
+                sIdx: dragSourceIndex,
+                oX: e.clientX - rect.left,
+                oY: e.clientY - rect.top,
+                hCell: null,
+                hOrder: null
+            });
+            
+            draggingEl.style.left = `${e.clientX - (e.clientX - rect.left)}px`;
+            draggingEl.style.top = `${e.clientY - (e.clientY - rect.top)}px`;
         }
 
-        function handlePointerMove(e) {
-            if (!draggingEl) return;
+        document.addEventListener('pointermove', (e) => {
+            if (!activeDrags.has(e.pointerId)) return;
             e.preventDefault(); 
-            updateDragPosition(e.clientX, e.clientY);
+            const drag = activeDrags.get(e.pointerId);
+            
+            drag.el.style.left = `${e.clientX - drag.oX}px`;
+            drag.el.style.top = `${e.clientY - drag.oY}px`;
 
-            draggingEl.style.display = 'none';
+            drag.el.style.display = 'none';
             const elUnder = document.elementFromPoint(e.clientX, e.clientY);
-            draggingEl.style.display = 'flex';
+            drag.el.style.display = 'flex';
 
             const targetQuadrant = elUnder ? elUnder.closest('.player-quadrant') : null;
-            let newHighlightedCell = null;
-            let newHighlightedOrder = null;
+            let newHCell = null;
+            let newHOrder = null;
 
-            if (targetQuadrant && parseInt(targetQuadrant.dataset.player) === dragPlayerIndex) {
-                newHighlightedCell = elUnder.closest('.grid-cell');
-                newHighlightedOrder = elUnder.closest('.order-card');
+            if (targetQuadrant && parseInt(targetQuadrant.dataset.player) === drag.pIdx) {
+                newHCell = elUnder.closest('.grid-cell');
+                newHOrder = elUnder.closest('.order-card');
             }
             
-            if (highlightedCell !== newHighlightedCell) {
-                if (highlightedCell) highlightedCell.classList.remove('highlight');
-                if (newHighlightedCell) newHighlightedCell.classList.add('highlight');
-                highlightedCell = newHighlightedCell;
+            if (drag.hCell !== newHCell) {
+                if (drag.hCell) drag.hCell.classList.remove('highlight');
+                if (newHCell) newHCell.classList.add('highlight');
+                drag.hCell = newHCell;
             }
 
-            if (highlightedOrder !== newHighlightedOrder) {
-                if (highlightedOrder) highlightedOrder.classList.remove('highlight-order');
-                if (newHighlightedOrder) newHighlightedOrder.classList.add('highlight-order');
-                highlightedOrder = newHighlightedOrder;
+            if (drag.hOrder !== newHOrder) {
+                if (drag.hOrder) drag.hOrder.classList.remove('highlight-order');
+                if (newHOrder) newHOrder.classList.add('highlight-order');
+                drag.hOrder = newHOrder;
             }
-        }
+        }, {passive: false});
 
-        function updateDragPosition(x, y) {
-            draggingEl.style.left = `${x - dragOffsetX}px`;
-            draggingEl.style.top = `${y - dragOffsetY}px`;
-        }
+        document.addEventListener('pointerup', handlePointerEnd);
+        document.addEventListener('pointercancel', handlePointerEnd);
 
-        function handlePointerUp(e) {
-            if (!draggingEl) return;
+        function handlePointerEnd(e) {
+            if (!activeDrags.has(e.pointerId)) return;
+            const drag = activeDrags.get(e.pointerId);
 
-            document.removeEventListener('pointermove', handlePointerMove);
-            document.removeEventListener('pointerup', handlePointerUp);
-            document.removeEventListener('pointercancel', handlePointerUp);
+            if (drag.hCell) drag.hCell.classList.remove('highlight');
+            if (drag.hOrder) drag.hOrder.classList.remove('highlight-order');
 
-            if (highlightedCell) highlightedCell.classList.remove('highlight');
-            if (highlightedOrder) highlightedOrder.classList.remove('highlight-order');
-
-            draggingEl.style.display = 'none';
+            drag.el.style.display = 'none';
             const elUnder = document.elementFromPoint(e.clientX, e.clientY);
-            draggingEl.style.display = 'flex';
 
             const targetQuadrant = elUnder ? elUnder.closest('.player-quadrant') : null;
-            const p = globalState.players[dragPlayerIndex];
+            const p = globalState.players[drag.pIdx];
 
-            if (targetQuadrant && parseInt(targetQuadrant.dataset.player) === dragPlayerIndex) {
+            if (targetQuadrant && parseInt(targetQuadrant.dataset.player) === drag.pIdx) {
                 const targetOrder = elUnder.closest('.order-card');
                 const targetCell = elUnder.closest('.grid-cell');
 
                 if (targetOrder) {
                     const orderIndex = parseInt(targetOrder.dataset.orderindex);
-                    const sourceData = p.boardData[dragSourceIndex];
+                    const sourceData = p.boardData[drag.sIdx];
                     const order = p.orders[orderIndex];
                     
                     const matchExists = order.items.some(i => i.reqId === sourceData.id && !i.isFulfilled);
-                    if (matchExists) fulfillOrderItem(dragPlayerIndex, orderIndex, dragSourceIndex, e.clientX, e.clientY);
-                    else renderBoard(dragPlayerIndex); 
+                    if (matchExists) fulfillOrderItem(drag.pIdx, orderIndex, drag.sIdx, e.clientX, e.clientY);
+                    else renderBoard(drag.pIdx); 
                 } 
                 else if (targetCell) {
                     const targetIndex = parseInt(targetCell.dataset.index);
-                    processDrop(dragPlayerIndex, dragSourceIndex, targetIndex);
+                    processDrop(drag.pIdx, drag.sIdx, targetIndex);
                 } 
-                else renderBoard(dragPlayerIndex);
+                else renderBoard(drag.pIdx);
             } 
-            else renderBoard(dragPlayerIndex);
+            else renderBoard(drag.pIdx);
 
-            draggingEl.remove();
-            draggingEl = null;
-            dragPlayerIndex = -1;
-            dragSourceIndex = -1;
-            highlightedCell = null;
-            highlightedOrder = null;
+            drag.el.remove();
+            activeDrags.delete(e.pointerId);
         }
 
         function processDrop(pIndex, sourceIdx, targetIdx) {
@@ -1094,8 +885,7 @@
         // --- QUIZ LOGIC ---
         function openQuizModal(pIndex) {
             if (globalState.isGameOver) return;
-            if (startConfig.players > 1 && pIndex !== globalState.activePlayerIndex) return;
-
+            
             activePlayerForQuiz = pIndex;
             const modal = document.getElementById('modal-quiz');
             const qEl = document.getElementById('quiz-question');
