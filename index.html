@@ -529,11 +529,8 @@
             globalState.players = [];
             globalState.isGameOver = false;
 
-            let gridCols = 6, gridRows = 5;
-            if (startConfig.players > 1) {
-                gridCols = 5; 
-                gridRows = 4;
-            }
+            // Diubah menjadi tepat 16 kotak (Grid 4x4) untuk setiap pemain
+            let gridCols = 4, gridRows = 4;
 
             for(let i = 0; i < startConfig.players; i++) {
                 globalState.players.push({
@@ -576,10 +573,6 @@
                     updateTimerUI();
                     if (globalState.timeRemaining <= 0) endGameByTime();
                 }, 1000);
-            }
-            
-            if(startConfig.players > 1) {
-                showModal('Mulai Bermain!', `Giliran pertama: ${globalState.players[0].name}`);
             }
         }
 
