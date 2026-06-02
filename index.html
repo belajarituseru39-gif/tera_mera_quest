@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dapur Literasi Numerasi - Mode IFP</title>
+    <title>Tera Mera Kitchen Quest - Mode IFP</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,6 +15,7 @@
             overflow: hidden;
             user-select: none;
             -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
         .bg-custom {
@@ -27,9 +28,6 @@
         /* Split Screen Grids */
         .grid-layout-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
         .grid-layout-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
-        .grid-layout-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-        .grid-layout-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-        .col-span-2-custom { grid-column: span 2; }
 
         /* Grid Cell & Items */
         .grid-cell {
@@ -112,12 +110,19 @@
 </head>
 <body class="w-screen h-screen flex flex-col bg-custom text-slate-800">
 
+    <!-- Audios -->
+    <audio id="bgm-audio" loop preload="auto">
+        <source src="https://github.com/belajarituseru39-gif/lagu-teramera/raw/refs/heads/main/Tera%20Mera%20Quest.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-correct" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sfx-wrong" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3" type="audio/mpeg">
+    </audio>
+
     <!-- Global Controls -->
-    <div class="fixed top-2 md:top-4 left-1/2 -translate-x-1/2 z-[999] flex gap-2 md:gap-4">
-        <!-- Audio BGM -->
-        <audio id="bgm-audio" loop preload="auto">
-            <source src="https://github.com/belajarituseru39-gif/lagu-teramera/raw/refs/heads/main/Tera%20Mera%20Quest.mp3" type="audio/mpeg">
-        </audio>
+    <div id="global-controls" class="fixed top-2 md:top-4 left-1/2 -translate-x-1/2 z-[999] flex gap-2 md:gap-4 transition-all duration-500">
         <button onclick="toggleMute()" id="btn-mute" class="bg-white/95 backdrop-blur-md w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-2xl shadow-xl border-2 border-slate-300 hover:bg-slate-100 transition hover:scale-105 active:scale-95 text-xl md:text-2xl" title="Mute/Unmute">
             🔊
         </button>
@@ -147,7 +152,8 @@
             <!-- Kiri: Logo & Narasi -->
             <div class="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left max-w-lg">
                 <img src="https://i.imgur.com/X5S3Ilb.png" alt="Dapur Literasi Numerasi" class="w-48 md:w-64 mb-6 drop-shadow-2xl hover:scale-105 transition duration-500 object-contain">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-lg leading-tight">Dapur Literasi<br><span class="text-yellow-300">Numerasi</span></h1>
+                <!-- Judul Diubah -->
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-lg leading-tight">Tera Mera<br><span class="text-yellow-300">Kitchen Quest</span></h1>
                 <p class="text-white text-base md:text-lg mb-6 drop-shadow-md font-medium leading-relaxed bg-black/30 p-5 rounded-2xl border border-white/20 backdrop-blur-sm">
                     "Selamat datang! Mari asah kemampuan membaca dan berhitungmu sambil mengelola dapur impian. Berkompetisilah bersama temanmu secara real-time dan kumpulkan uang paling banyak!"
                 </p>
@@ -156,7 +162,7 @@
                 </div>
             </div>
             
-            <!-- Kanan: Menu Panel (Satu Kotak Rapi) -->
+            <!-- Kanan: Menu Panel -->
             <div class="w-full max-w-md bg-white text-slate-800 p-6 md:p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative border-b-8 border-slate-200 flex flex-col gap-5">
                 
                 <button onclick="openPanduan()" class="absolute -top-4 -right-4 bg-indigo-500 text-white hover:bg-indigo-600 rounded-full py-2 px-6 font-bold transition shadow-xl border-4 border-white z-10 flex items-center gap-2 text-sm">
@@ -165,7 +171,6 @@
 
                 <h2 class="text-2xl font-bold text-slate-800 text-center border-b-2 border-slate-100 pb-3">Pengaturan Permainan</h2>
 
-                <!-- Pengaturan Dasar (Dropdowns) -->
                 <div class="space-y-4">
                     <div>
                         <label class="font-bold text-xs md:text-sm text-blue-600 uppercase tracking-wide mb-1.5 block">Jumlah Pemain</label>
@@ -173,8 +178,6 @@
                             <select id="select-players" onchange="handlePlayerSelect()" class="w-full bg-slate-50 border-2 border-slate-300 text-slate-700 font-bold py-2.5 px-4 rounded-xl outline-none focus:border-blue-500 appearance-none cursor-pointer transition shadow-sm">
                                 <option value="1">Solo (1 Pemain)</option>
                                 <option value="2">2 Pemain</option>
-                                <option value="3">3 Pemain</option>
-                                <option value="4">4 Pemain</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-600">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
@@ -212,7 +215,6 @@
                     </div>
                 </div>
 
-                <!-- Nama Pemain Inputs -->
                 <div class="border-t-2 border-slate-100 pt-3">
                     <label class="font-bold text-xs md:text-sm text-blue-600 uppercase tracking-wide mb-2 block">Nama Pemain</label>
                     <div id="names-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 justify-center">
@@ -220,12 +222,10 @@
                     </div>
                 </div>
 
-                <!-- Play Button -->
                 <button onclick="startGame()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xl py-3.5 rounded-xl shadow-[0_5px_0_#c2410c] transform transition active:translate-y-1 active:shadow-none mt-2 uppercase tracking-wider">
                     Mulai Bermain!
                 </button>
                 
-                <!-- Developer Credit -->
                 <div class="text-center text-slate-500 text-xs md:text-sm font-medium mt-1">
                     Ide Pengembang oleh: <span class="font-bold text-slate-700">Abdul Rahmat</span><br>
                     SDN 011 Balikpapan Tengah | No. Telp: 081351767574
@@ -234,7 +234,7 @@
         </div>
     </div>
 
-    <!-- Modals Container -->
+    <!-- Global Modals Container -->
     
     <!-- Panduan Modal -->
     <div id="modal-panduan" class="fixed inset-0 modal-overlay flex justify-center items-center hidden z-[150]">
@@ -242,7 +242,7 @@
             <button onclick="closePanduan()" class="absolute top-4 right-4 bg-red-100 text-red-500 hover:bg-red-200 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl">X</button>
             <h2 class="text-3xl font-bold text-indigo-600 mb-4 text-center">📖 Panduan Bermain</h2>
             <div class="flex-1 overflow-y-auto p-2 space-y-4 text-slate-700 font-medium">
-                <p>Selamat datang di Dapur Literasi Numerasi! Kelola dapur dan jawab tantangan belajarnya.</p>
+                <p>Selamat datang di Tera Mera Kitchen Quest! Kelola dapur dan jawab tantangan belajarnya.</p>
                 <ol class="list-decimal pl-5 space-y-2">
                     <li>Gunakan <strong>Energi</strong> dengan menekan tombol <strong>Keranjang Belanja</strong> untuk memunculkan bahan mentah acak di papan.</li>
                     <li><strong>Gabungkan (Drag & Drop)</strong> dua bahan yang sama persis untuk menciptakannya menjadi hidangan baru yang lebih tinggi levelnya.
@@ -256,7 +256,6 @@
                     </li>
                     <li>Lihat pesanan pelanggan di bagian atas papan Anda. Seret hidangan yang sesuai ke karakter pelanggan tersebut untuk mendapatkan <strong>Uang Kertas</strong>.</li>
                     <li>Jika energi habis, tekan tombol <strong>Kumpulkan Energi</strong> dan jawab kuis Literasi/Numerasi dengan benar untuk memulihkan 10 Energi.</li>
-                    <li>Jika bermain lebih dari 1 orang, permainan berlangsung secara <strong>BERGILIRAN</strong>. Tekan tombol <strong>"SELESAI"</strong> jika giliranmu sudah habis.</li>
                     <li>Kumpulkan koin sebanyak-banyaknya hingga 600 Koin untuk menang!</li>
                 </ol>
             </div>
@@ -264,23 +263,7 @@
         </div>
     </div>
 
-    <!-- Quiz Modal -->
-    <div id="modal-quiz" class="fixed inset-0 modal-overlay flex justify-center items-center hidden z-50">
-        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl max-w-3xl w-full mx-4 transform transition-all text-center border-4 border-blue-400 relative">
-            <h2 class="text-2xl md:text-3xl font-bold text-blue-600 mb-2">🧠 Kuis Tantangan</h2>
-            <p id="quiz-subtitle" class="text-sm md:text-base text-slate-600 mb-6 font-medium">Jawab kuis ini dengan benar untuk mendapat tambahan 10 Energi.</p>
-            
-            <div class="bg-blue-50 p-4 md:p-6 rounded-2xl mb-6 border-2 border-blue-100 max-h-[30vh] overflow-y-auto">
-                <p id="quiz-question" class="text-lg md:text-xl font-bold text-slate-800 text-left whitespace-pre-line"></p>
-            </div>
-            
-            <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                <!-- Options generated by JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Message Box Modal -->
+    <!-- Global Message Box (For Game Over) -->
     <div id="modal-message" class="fixed inset-0 modal-overlay flex justify-center items-center hidden z-[200]">
         <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full mx-4 text-center transform transition-all scale-95 border-4 border-slate-300">
             <h2 id="msg-title" class="text-2xl font-bold text-slate-800 mb-4">Pesan</h2>
@@ -417,8 +400,6 @@
             isGameOver: false
         };
 
-        let activePlayerForQuiz = 0;
-
         // Multi-Touch Drag Engine State
         const activeDrags = new Map();
 
@@ -460,10 +441,7 @@
             }
             document.getElementById('start-screen').classList.add('hidden');
             
-            // Filter Quiz DB based on Jenjang
-            // - SD memunculkan soal SD dan SD-SMP
-            // - SMP memunculkan soal SD-SMP, SMP, dan SMP-SMA
-            // - SMA memunculkan soal SMP-SMA dan SMA
+            // Filter Quiz
             filteredQuizzes = ALL_QUIZZES.filter(q => {
                 if (startConfig.jenjang === 'SD') return q.lvl === 'SD' || q.lvl === 'SD-SMP';
                 if (startConfig.jenjang === 'SMP') return q.lvl === 'SD-SMP' || q.lvl === 'SMP' || q.lvl === 'SMP-SMA';
@@ -471,10 +449,10 @@
                 return true;
             });
             
-            // Play Background Music
+            // BGM Start
             const bgm = document.getElementById('bgm-audio');
             bgm.volume = 0.5;
-            bgm.play().catch(e => console.log("Auto-play prevented by browser. Mute toggling may be required.", e));
+            bgm.play().catch(e => console.log(e));
             
             initializeGameData();
         }
@@ -496,7 +474,7 @@
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
-                    console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                    console.log(`Error: ${err.message}`);
                 });
             } else {
                 if (document.exitFullscreen) {
@@ -529,8 +507,15 @@
             globalState.players = [];
             globalState.isGameOver = false;
 
-            // Diubah menjadi tepat 16 kotak (Grid 4x4) untuk setiap pemain
-            let gridCols = 4, gridRows = 4;
+            // Shift global controls to center of left screen in 2-player mode
+            const globalControls = document.getElementById('global-controls');
+            if (startConfig.players === 2) {
+                globalControls.className = "fixed top-2 md:top-4 left-1/4 -translate-x-1/2 z-[999] flex gap-2 md:gap-4 transition-all duration-500";
+            } else {
+                globalControls.className = "fixed top-2 md:top-4 left-1/2 -translate-x-1/2 z-[999] flex gap-2 md:gap-4 transition-all duration-500";
+            }
+
+            let gridCols = 4, gridRows = 4; // Always 16 boxes
 
             for(let i = 0; i < startConfig.players; i++) {
                 globalState.players.push({
@@ -549,13 +534,11 @@
                 });
             }
 
-            // Setup Layout
             const mainContainer = document.getElementById('main-container');
             mainContainer.className = `flex-1 w-full h-full p-2 grid gap-2 overflow-hidden z-10 relative grid-layout-${startConfig.players}`;
             
             mainContainer.innerHTML = globalState.players.map(p => generatePlayerUI(p)).join('');
 
-            // Init Logic per player
             globalState.players.forEach(p => {
                 setupInitialBoard(p.index);
                 replenishOrders(p.index);
@@ -563,7 +546,6 @@
                 updateUI(p.index);
             });
 
-            // Timer Setup
             if (startConfig.duration > 0) {
                 document.getElementById('global-bar').classList.remove('hidden');
                 globalState.timeRemaining = startConfig.duration * 60;
@@ -577,9 +559,31 @@
         }
 
         function generatePlayerUI(p) {
-            const isColSpan = (startConfig.players === 3 && p.index === 2) ? 'col-span-2-custom' : '';
             return `
-                <div id="quadrant-${p.index}" class="player-quadrant flex flex-col h-full bg-white/50 backdrop-blur-sm rounded-2xl border-4 border-slate-300 shadow-lg relative overflow-hidden ${isColSpan}" data-player="${p.index}">
+                <div id="quadrant-${p.index}" class="player-quadrant flex flex-col h-full bg-white/50 backdrop-blur-sm rounded-2xl border-4 border-slate-300 shadow-lg relative overflow-hidden" data-player="${p.index}">
+
+                    <!-- Isolated Message Overlay -->
+                    <div id="msg-overlay-${p.index}" class="absolute inset-0 bg-black/40 z-[60] hidden flex-col justify-center items-center pointer-events-none">
+                        <div id="msg-box-${p.index}" class="px-6 py-4 rounded-3xl shadow-2xl text-white text-center transform scale-95 transition-transform border-4 border-white/50">
+                            <h2 id="msg-title-${p.index}" class="text-2xl md:text-3xl font-bold mb-1"></h2>
+                            <p id="msg-text-${p.index}" class="text-lg md:text-xl font-medium"></p>
+                        </div>
+                    </div>
+
+                    <!-- Isolated Quiz Overlay -->
+                    <div id="quiz-overlay-${p.index}" class="absolute inset-0 bg-slate-900/90 backdrop-blur-md z-50 hidden flex-col justify-center items-center p-4">
+                        <div class="bg-white p-4 md:p-6 rounded-3xl shadow-2xl w-full max-w-lg flex flex-col border-4 border-blue-400 relative">
+                            <button onclick="closeQuizModal(${p.index})" class="absolute top-2 right-2 bg-red-100 text-red-500 hover:bg-red-200 rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg">X</button>
+                            <h2 class="text-xl md:text-2xl font-bold text-blue-600 mb-2">🧠 Kuis Numerasi</h2>
+                            <p class="text-xs text-slate-500 mb-2">Pulihkan 10 Energi</p>
+                            <div class="bg-blue-50 p-3 rounded-xl mb-4 border-2 border-blue-100 max-h-[30vh] overflow-y-auto">
+                                <p id="quiz-q-${p.index}" class="text-base md:text-lg font-bold text-slate-800 text-left whitespace-pre-line"></p>
+                            </div>
+                            <div id="quiz-opts-${p.index}" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                <!-- Generated -->
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Player Header -->
                     <div class="bg-white/95 p-1.5 md:p-2 border-b-2 border-slate-200 flex justify-between items-center shrink-0 z-10">
@@ -596,20 +600,18 @@
                                 <div class="flex items-center bg-green-100 px-2 py-1 rounded-full shadow-inner border border-green-200 h-max">
                                     <img src="https://i.imgur.com/Twygeyp.png" class="w-4 h-4 md:w-5 md:h-5 mr-1"><span id="p${p.index}-energy" class="font-bold text-green-700 text-sm md:text-base">${p.energy}</span>
                                 </div>
-                                <button onclick="openQuizModal(${p.index})" class="text-[9px] md:text-[10px] font-bold bg-green-500 text-white px-2 py-0.5 rounded-full mt-1 hover:bg-green-600 active:scale-95 transition tracking-wider w-full shadow-sm" ${startConfig.players > 1 ? 'id="btn-quiz-'+p.index+'"' : ''}>KUMPULKAN ENERGI</button>
+                                <button onclick="openQuizModal(${p.index})" class="text-[9px] md:text-[10px] font-bold bg-green-500 text-white px-2 py-0.5 rounded-full mt-1 hover:bg-green-600 active:scale-95 transition tracking-wider w-full shadow-sm">KUMPULKAN ENERGI</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Orders Area -->
                     <div id="p${p.index}-orders" class="flex gap-3 p-2 md:p-3 overflow-x-auto min-h-[90px] md:min-h-[115px] shrink-0 bg-indigo-50/60 items-center justify-start border-b border-indigo-100 z-10">
-                        <!-- Orders inserted here -->
                     </div>
 
                     <!-- Board Area -->
                     <div class="flex-1 p-1 md:p-2 flex justify-center items-center overflow-hidden z-10">
                         <div id="p${p.index}-board" class="grid gap-1 w-full h-full max-h-full aspect-auto mx-auto ${startConfig.players === 1 ? 'max-w-4xl max-h-[70vh]' : ''}" style="grid-template-columns: repeat(${p.cols}, minmax(0, 1fr)); grid-template-rows: repeat(${p.rows}, minmax(0, 1fr));">
-                            <!-- Cells inserted here -->
                         </div>
                     </div>
 
@@ -655,8 +657,8 @@
 
         function useGenerator(pIndex) {
             if (globalState.isGameOver) return;
-            
             const p = globalState.players[pIndex];
+            
             if (p.energy < 5) {
                 openQuizModal(pIndex);
                 return;
@@ -695,17 +697,13 @@
                 p.hasWon = true;
                 declareWinner(p);
             } else if (p.coins >= 400 && p.level < 5) {
-                p.level = 5; p.maxOrders = 5;
-                replenishOrders(pIndex);
+                p.level = 5; p.maxOrders = 5; replenishOrders(pIndex);
             } else if (p.coins >= 300 && p.level < 4) {
-                p.level = 4; p.maxOrders = 5;
-                replenishOrders(pIndex);
+                p.level = 4; p.maxOrders = 5; replenishOrders(pIndex);
             } else if (p.coins >= 200 && p.level < 3) {
-                p.level = 3; p.maxOrders = 3;
-                replenishOrders(pIndex);
+                p.level = 3; p.maxOrders = 3; replenishOrders(pIndex);
             } else if (p.coins >= 100 && p.level < 2) {
-                p.level = 2; p.maxOrders = 3;
-                replenishOrders(pIndex);
+                p.level = 2; p.maxOrders = 3; replenishOrders(pIndex);
             }
         }
 
@@ -819,7 +817,7 @@
             }
         }
 
-        // --- DRAG AND DROP (Multi-Touch IFP Ready) ---
+        // --- TRUE SIMULTANEOUS MULTI-TOUCH DRAG ENGINE ---
         function handlePointerDown(e) {
             if (globalState.isGameOver) return;
             if (e.button !== 0 && e.type !== 'touchstart' && e.type !== 'pointerdown') return;
@@ -828,21 +826,27 @@
             if (!quadrant) return;
             
             const dragPlayerIndex = parseInt(quadrant.dataset.player);
-            const draggingEl = e.currentTarget;
-            const dragSourceIndex = parseInt(draggingEl.dataset.index);
+            const originalEl = e.currentTarget;
+            const dragSourceIndex = parseInt(originalEl.dataset.index);
             
-            const rect = draggingEl.getBoundingClientRect();
+            const rect = originalEl.getBoundingClientRect();
             
-            draggingEl.style.position = 'fixed';
-            draggingEl.style.zIndex = '1000';
-            draggingEl.style.width = `${rect.width}px`;
-            draggingEl.style.height = `${rect.height}px`;
-            draggingEl.style.transition = 'none'; 
+            // Create a clone for dragging so we don't break touch capture or DOM hierarchy
+            const cloneEl = originalEl.cloneNode(true);
+            cloneEl.style.position = 'fixed';
+            cloneEl.style.zIndex = '1000';
+            cloneEl.style.width = `${rect.width}px`;
+            cloneEl.style.height = `${rect.height}px`;
+            cloneEl.style.margin = '0';
+            cloneEl.style.transition = 'none'; 
+            cloneEl.style.pointerEvents = 'none'; // Critical for elementFromPoint
             
-            document.body.appendChild(draggingEl);
+            document.body.appendChild(cloneEl);
+            originalEl.style.opacity = '0.3'; // Dim original
             
             activeDrags.set(e.pointerId, {
-                el: draggingEl,
+                originalEl: originalEl,
+                cloneEl: cloneEl,
                 pIdx: dragPlayerIndex,
                 sIdx: dragSourceIndex,
                 oX: e.clientX - rect.left,
@@ -851,8 +855,8 @@
                 hOrder: null
             });
             
-            draggingEl.style.left = `${e.clientX - (e.clientX - rect.left)}px`;
-            draggingEl.style.top = `${e.clientY - (e.clientY - rect.top)}px`;
+            cloneEl.style.left = `${e.clientX - (e.clientX - rect.left)}px`;
+            cloneEl.style.top = `${e.clientY - (e.clientY - rect.top)}px`;
         }
 
         document.addEventListener('pointermove', (e) => {
@@ -860,12 +864,11 @@
             e.preventDefault(); 
             const drag = activeDrags.get(e.pointerId);
             
-            drag.el.style.left = `${e.clientX - drag.oX}px`;
-            drag.el.style.top = `${e.clientY - drag.oY}px`;
+            drag.cloneEl.style.left = `${e.clientX - drag.oX}px`;
+            drag.cloneEl.style.top = `${e.clientY - drag.oY}px`;
 
-            drag.el.style.display = 'none';
+            // cloneEl is pointerEvents: none, so this works natively without hiding
             const elUnder = document.elementFromPoint(e.clientX, e.clientY);
-            drag.el.style.display = 'flex';
 
             const targetQuadrant = elUnder ? elUnder.closest('.player-quadrant') : null;
             let newHCell = null;
@@ -899,7 +902,6 @@
             if (drag.hCell) drag.hCell.classList.remove('highlight');
             if (drag.hOrder) drag.hOrder.classList.remove('highlight-order');
 
-            drag.el.style.display = 'none';
             const elUnder = document.elementFromPoint(e.clientX, e.clientY);
 
             const targetQuadrant = elUnder ? elUnder.closest('.player-quadrant') : null;
@@ -926,7 +928,9 @@
             } 
             else renderBoard(drag.pIdx);
 
-            drag.el.remove();
+            // Cleanup
+            drag.cloneEl.remove();
+            drag.originalEl.style.opacity = '1';
             activeDrags.delete(e.pointerId);
         }
 
@@ -965,6 +969,10 @@
                 const item = order.items[itemIndex];
                 item.isFulfilled = true;
                 
+                // Play Audio
+                const sfx = document.getElementById('sfx-correct');
+                sfx.currentTime = 0; sfx.play().catch(e=>{});
+
                 p.coins += item.reward;
                 showFloatingReward(`+${item.reward}`, mouseX, mouseY);
                 p.boardData[cellIndex] = null;
@@ -1006,28 +1014,24 @@
             let winner = globalState.players[0];
             globalState.players.forEach(p => { if (p.coins > winner.coins) winner = p; });
             
-            showModal('Waktu Habis! ⏰', `Permainan selesai! Pemenangnya adalah ${winner.name} dengan ${winner.coins} Uang Kertas!`);
+            showGlobalModal('Waktu Habis! ⏰', `Permainan selesai! Pemenangnya adalah ${winner.name} dengan ${winner.coins} Uang Kertas!`);
         }
 
         function declareWinner(p) {
             clearInterval(globalState.timerInterval);
             globalState.isGameOver = true;
-            showModal('🏆 Luar Biasa, Menang! 🏆', `Selamat ${p.name}! Kamu telah mencapai 600 Uang Kertas dan berhasil mengelola Dapur Literasi dengan sempurna!`);
+            showGlobalModal('🏆 Luar Biasa, Menang! 🏆', `Selamat ${p.name}! Kamu telah mencapai 600 Uang Kertas dan berhasil mengelola Dapur dengan sempurna!`);
         }
 
-        // --- QUIZ LOGIC ---
+        // --- ISOLATED QUIZ LOGIC (Per-Quadrant) ---
         function openQuizModal(pIndex) {
             if (globalState.isGameOver) return;
             
-            activePlayerForQuiz = pIndex;
-            const modal = document.getElementById('modal-quiz');
-            const qEl = document.getElementById('quiz-question');
-            const optContainer = document.getElementById('quiz-options');
+            const overlay = document.getElementById(`quiz-overlay-${pIndex}`);
+            const qEl = document.getElementById(`quiz-q-${pIndex}`);
+            const optContainer = document.getElementById(`quiz-opts-${pIndex}`);
             
-            document.getElementById('quiz-subtitle').innerText = `Kuis untuk ${globalState.players[pIndex].name} - Pulihkan 10 Energi`;
-            
-            // Pick random quiz from filtered DB
-            if (filteredQuizzes.length === 0) filteredQuizzes = ALL_QUIZZES; // Fallback
+            if (filteredQuizzes.length === 0) filteredQuizzes = ALL_QUIZZES; 
             const quiz = filteredQuizzes[Math.floor(Math.random() * filteredQuizzes.length)];
             
             qEl.innerText = quiz.q;
@@ -1036,30 +1040,61 @@
             const shuffledOptions = [...quiz.options].sort(() => Math.random() - 0.5);
             shuffledOptions.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = 'bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold py-3 md:py-4 rounded-xl border-2 border-blue-300 transition active:scale-95 text-lg md:text-xl shadow-sm text-left px-4';
+                btn.className = 'bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold py-2 md:py-3 rounded-xl border-2 border-blue-300 transition active:scale-95 text-sm md:text-base shadow-sm text-left px-3 md:px-4';
                 btn.innerText = opt;
-                btn.onclick = () => checkQuiz(opt, quiz.answer);
+                btn.onclick = () => checkQuiz(pIndex, opt, quiz.answer);
                 optContainer.appendChild(btn);
             });
             
-            modal.classList.remove('hidden');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
         }
 
-        function checkQuiz(selected, correct) {
-            document.getElementById('modal-quiz').classList.add('hidden');
-            const p = globalState.players[activePlayerForQuiz];
+        function closeQuizModal(pIndex) {
+            const overlay = document.getElementById(`quiz-overlay-${pIndex}`);
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
+        }
+
+        function checkQuiz(pIndex, selected, correct) {
+            closeQuizModal(pIndex);
+            const p = globalState.players[pIndex];
             
             if (selected === correct) {
+                const sfx = document.getElementById('sfx-correct');
+                sfx.currentTime = 0; sfx.play().catch(e=>{});
+
                 p.energy = Math.min(p.maxEnergy, p.energy + 10);
-                showModal('Jawaban Benar! 🎉', `Hebat ${p.name}! Kamu mendapat tambahan 10 Energi!`);
+                showPlayerMessage(pIndex, 'Benar! 🎉', '+10 Energi', 'bg-green-500');
             } else {
-                showModal('Jawaban Kurang Tepat 😢', 'Jawaban salah. Coba kumpulkan energi lagi dan jawab pertanyaan baru!');
+                const sfx = document.getElementById('sfx-wrong');
+                sfx.currentTime = 0; sfx.play().catch(e=>{});
+
+                showPlayerMessage(pIndex, 'Salah 😢', 'Coba lagi nanti!', 'bg-red-500');
             }
-            updateUI(activePlayerForQuiz);
+            updateUI(pIndex);
         }
 
-        // --- UTILS ---
-        function showModal(title, text) {
+        function showPlayerMessage(pIndex, title, text, bgClass) {
+            const overlay = document.getElementById(`msg-overlay-${pIndex}`);
+            const box = document.getElementById(`msg-box-${pIndex}`);
+            
+            document.getElementById(`msg-title-${pIndex}`).innerText = title;
+            document.getElementById(`msg-text-${pIndex}`).innerText = text;
+            
+            box.className = `${bgClass} px-6 py-4 rounded-3xl shadow-2xl text-white text-center transform scale-100 transition-transform border-4 border-white/50 animate-pop`;
+            
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }, 1500);
+        }
+
+        // --- GLOBAL UTILS ---
+        function showGlobalModal(title, text) {
             document.getElementById('msg-title').innerText = title;
             document.getElementById('msg-text').innerText = text;
             const modal = document.getElementById('modal-message');
