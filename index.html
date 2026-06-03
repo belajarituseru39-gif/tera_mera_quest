@@ -112,32 +112,19 @@
 </head>
 <body class="w-screen h-screen flex flex-col bg-custom text-slate-800">
 
-    <!-- Global Controls -->
-    <div id="global-controls" class="fixed top-4 z-[999] flex gap-3 justify-center left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-xl border-2 border-slate-300 items-center">
-        <!-- Audio BGM -->
+    <!-- Container Audio (Tersembunyi) untuk menjamin SFX ter-load -->
+    <div class="hidden">
         <audio id="bgm-audio" loop preload="auto">
             <source src="https://github.com/belajarituseru39-gif/lagu-teramera/raw/refs/heads/main/Tera%20Mera%20Quest.mp3" type="audio/mpeg">
         </audio>
-        
-        <!-- Volume Controls -->
-        <div class="flex items-center gap-2 border-r-2 border-slate-300 pr-3">
-            <button onclick="toggleMute()" id="btn-mute" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-xl" title="Mute/Unmute">
-                🔊
-            </button>
-            <input type="range" id="bgm-volume" min="0" max="1" step="0.05" value="0.5" class="w-24 md:w-32 accent-blue-500 cursor-pointer" oninput="changeVolume(this.value)" title="Volume Musik">
-        </div>
-
-        <button onclick="goHome()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-xl" title="Kembali ke Menu (Home)">
-            🏠
-        </button>
-        <button onclick="toggleFullscreen()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-xl group" title="Layar Penuh">
-            <span class="group-hover:hidden">🔲</span>
-            <span class="hidden group-hover:inline">📺</span>
-        </button>
+        <audio id="sfx-correct" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
+        <audio id="sfx-wrong" src="https://assets.mixkit.co/active_storage/sfx/2832/2832-preview.mp3" preload="auto"></audio>
+        <audio id="sfx-merge" src="https://assets.mixkit.co/active_storage/sfx/2673/2673-preview.mp3" preload="auto"></audio>
+        <audio id="sfx-coin" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3" preload="auto"></audio>
     </div>
 
     <!-- Global Timer Bar -->
-    <div id="global-bar" class="w-full bg-slate-800 text-white flex justify-center items-center py-1 font-bold text-xl tracking-widest hidden shadow-md z-40 shrink-0">
+    <div id="global-bar" class="w-full bg-slate-800 text-white flex justify-center items-center py-1.5 font-bold text-xl tracking-widest hidden shadow-md z-40 shrink-0">
         WAKTU TERSISA: <span id="timer-text" class="ml-2 text-yellow-400">00:00</span>
     </div>
 
@@ -349,7 +336,7 @@
 
         // --- DATABASE SOAL LITERASI & NUMERASI ---
         const ALL_QUIZZES = [
-            // --- SOAL LITERASI SD (BARU - FULL ANBK KISAH BIMA, KANCIL, BATIK) ---
+            // --- SOAL LITERASI SD ---
             { lvl: "SD", type: "single", stimulus: "Di sebuah desa kecil di kaki Gunung Merapi, hiduplah seorang anak laki-laki bernama Bima. Bima sangat menyukai tanaman. Setiap pagi, ia menyiram bunga-bunga di halaman rumahnya dengan penuh kasih sayang. Suatu hari, Bima menemukan sebuah bibit pohon yang belum pernah ia lihat sebelumnya. Bibit itu memiliki daun berwarna ungu cerah. Bima pun memutuskan untuk menanamnya di sebuah pot besar di dekat kamarnya. Ia berharap pohon itu akan tumbuh menjadi pohon yang indah dan memberikan manfaat bagi orang-orang di sekitarnya.", q: "Tokoh utama yang memiliki kegemaran merawat tanaman dalam cerita di atas adalah ....", options: ["Merapi", "Bima", "Anak laki-laki", "Penjual bibit"], answer: "Bima" },
             { lvl: "SD", type: "single", stimulus: "Bima rutin memberikan pupuk organik agar tanaman uniknya tidak layu. Kata 'organik' dalam kalimat tersebut merujuk pada bahan-bahan yang berasal dari alam, seperti sisa tumbuhan atau kotoran hewan yang telah diolah.", q: "Makna kata organik pada teks tersebut berkaitan dengan sesuatu yang berasal dari ....", options: ["bahan kimia buatan", "sisa pabrik industri", "makhluk hidup atau alam", "bebatuan di pegunungan"], answer: "makhluk hidup atau alam" },
             { lvl: "SD", type: "single", stimulus: "Pohon berdaun ungu milik Bima tumbuh dengan cepat. Namun, tetangganya, Pak Danu, merasa khawatir pohon itu akan membawa nasib buruk karena warnanya yang aneh. Pak Danu menyarankan Bima untuk menebang pohon itu. Bima tidak setuju. Ia menjelaskan bahwa warna ungu itu berasal dari jenis nutrisi yang ada di tanah tersebut, bukan karena keajaiban atau hal buruk lainnya.", q: "Alasan Pak Danu menyarankan Bima untuk menebang pohon tersebut adalah ....", options: ["karena pohonnya sudah terlalu besar", "karena pohonnya menghalangi jalan", "karena khawatir akan membawa nasib buruk", "karena Pak Danu ingin memilikinya"], answer: "karena khawatir akan membawa nasib buruk" },
@@ -371,7 +358,7 @@
             { lvl: "SD", type: "complex", stimulus: "Pelestarian batik sangat penting karena batik merupakan identitas bangsa Indonesia di mata dunia. Selain itu, industri batik juga menghidupkan ekonomi rakyat, terutama para pengrajin di daerah-daerah.", q: "Alasan pentingnya melestarikan batik menurut teks tersebut adalah .... (Pilih dua jawaban benar)", options: ["Sebagai identitas bangsa Indonesia di dunia.", "Karena batik adalah kain yang paling mahal di dunia.", "Untuk membantu perekonomian para pengrajin lokal.", "Agar semua orang diwajibkan menjadi pengrajin."], answer: [0, 2] },
             { lvl: "SD", type: "single", stimulus: "Melihat perkembangan batik yang semakin pesat, kita sebagai warga negara harus bangga. Mengenakan batik bukan hanya soal fashion, tapi juga bentuk apresiasi terhadap karya seni dan sejarah panjang nenek moyang kita.", q: "Simpulan yang tepat mengenai makna mengenakan batik bagi seorang warga negara adalah ....", options: ["sekadar mengikuti tren pakaian agar terlihat keren", "memenuhi kewajiban dari sekolah atau kantor", "bentuk penghargaan terhadap karya seni dan sejarah", "cara agar bisa menjual batik dengan harga tinggi"], answer: "bentuk penghargaan terhadap karya seni dan sejarah" },
 
-            // --- SOAL NUMERASI SD (DIGABUNGKAN KEMBALI) ---
+            // --- SOAL NUMERASI SD ---
             { lvl: "SD", type: "single", stimulus: "Ibu memotong sebuah kue bolu menjadi 8 bagian yang sama besar untuk diberikan kepada dua anaknya, Andi dan Budi. Andi mendapatkan 2 potong kue, sedangkan Budi mendapatkan bagian yang lebih banyak. Ibu menjelaskan bahwa pecahan dapat memiliki bentuk yang berbeda namun nilainya tetap sama jika perbandingannya setara.", q: "Berdasarkan cerita tersebut, pecahan yang senilai dengan bagian kue yang diterima Andi adalah ....", options: ["1/4", "1/2", "2/3", "3/4"], answer: "1/4" },
             { lvl: "SD", type: "single", stimulus: "Pak Rahmat pergi ke pasar untuk membeli kebutuhan warungnya. Ia membeli 5 karung beras yang masing-masing beratnya 25 kg. Di tengah jalan, Pak Rahmat berhenti di panti asuhan untuk menyumbangkan 30 kg beras. Pak Rahmat ingin memastikan sisa beras yang dibawa ke warung cukup untuk memenuhi pesanan pelanggan.", q: "Sisa beras yang dibawa Pak Rahmat menuju warungnya adalah ....", options: ["95 kg", "105 kg", "125 kg", "155 kg"], answer: "95 kg" },
             { lvl: "SD", type: "single", stimulus: "Dua orang sahabat, Rian dan Bayu, memiliki hobi berenang di tempat yang sama. Rian pergi berenang setiap 4 hari sekali, sedangkan Bayu pergi berenang setiap 6 hari sekali. Pada tanggal 2 Maret, mereka tidak sengaja bertemu di kolam renang dan berjanji untuk tetap rutin berolahraga agar tubuh sehat.", q: "Rian dan Bayu akan bertemu kembali untuk berenang bersama pada tanggal ....", options: ["10 Maret", "12 Maret", "14 Maret", "16 Maret"], answer: "14 Maret" },
@@ -393,19 +380,49 @@
             { lvl: "SD", type: "complex", stimulus: "Setiap hari Minggu, keluarga Lani melakukan kerja bakti membersihkan rumah. Mereka mulai bekerja pada pukul 07.30 dan selesai pada pukul 09.45. Selama kegiatan, mereka beristirahat selama 15 menit untuk minum teh bersama. Lani ingin mencatat durasi aktif mereka bekerja.", q: "Pernyataan yang benar mengenai durasi kerja bakti keluarga Lani adalah ....", options: ["Total waktu dari awal sampai selesai adalah 2 jam 15 menit.", "Durasi aktif bekerja (tanpa istirahat) adalah 2 jam.", "Jika mereka tidak istirahat, mereka selesai pada pukul 09.30.", "Total waktu 2 jam 15 menit sama dengan 135 menit."], answer: [0, 1, 3] },
             { lvl: "SD", type: "complex", stimulus: "Dalam pemilihan ketua kelas, terdapat tiga kandidat: Ali, Siti, dan Budi. Dari 30 siswa yang memberikan suara, Ali mendapatkan 12 suara, Siti 10 suara, dan sisanya memilih Budi. Guru ingin memastikan semua siswa memahami hasil perolehan suara tersebut dalam bentuk analisis data sederhana.", q: "Pernyataan yang benar mengenai hasil pemilihan ketua kelas tersebut adalah ....", options: ["Budi mendapatkan 8 suara.", "Peluang terpilihnya Siti jika diambil satu suara secara acak adalah 1/3.", "Selisih suara antara Ali dan Budi adalah 4 suara.", "Ali adalah pemenang pemilihan karena mendapatkan suara terbanyak."], answer: [0, 2, 3] },
 
-            // --- SOAL SMP ---
-            { lvl: "SMP", type: "single", q: "Banyak siswa memilih bersepeda ke sekolah karena lebih hemat biaya dan ramah lingkungan.\n\nApa alasan utama siswa memilih bersepeda?", options: ["Lebih cepat", "Hemat & ramah lingkungan", "Bisa saat hujan", "Tanpa tenaga"], answer: "Hemat & ramah lingkungan" },
-            { lvl: "SMP", type: "single", q: "1. Sampah plastik sulit terurai.\n2. Penggunaan plastik sekali pakai perlu dikurangi.\n\nHubungan kedua pernyataan tersebut adalah...", options: ["Pertentangan", "Sebab-akibat", "Perbandingan", "Pengandaian"], answer: "Sebab-akibat" },
-            { lvl: "SMP", type: "single", q: "Pengunjung: Senin 120, Selasa 150, Rabu 180.\n\nSelisih jumlah pengunjung hari Rabu dan Senin adalah...", options: ["40", "50", "60", "70"], answer: "60" },
-            { lvl: "SMP", type: "single", q: "Sebuah toko memberikan diskon 20% untuk tas seharga Rp150.000.\n\nHarga setelah diskon adalah...", options: ["Rp110.000", "Rp115.000", "Rp120.000", "Rp125.000"], answer: "Rp120.000" },
-            { lvl: "SMP", type: "single", q: "Hutan mangrove melindungi pantai dari abrasi dan jadi habitat hewan.\n\nInformasi yang sesuai adalah...", options: ["Mempercepat abrasi", "Hanya satu jenis pohon", "Bermanfaat bagi lingkungan pesisir", "Tidak ada fungsi ekologis"], answer: "Bermanfaat bagi lingkungan pesisir" },
-            { lvl: "SMP", type: "single", q: "Penggunaan energi listrik yang berlebihan dapat meningkatkan biaya tagihan bulanan.\n\nSimpulan yang tepat adalah...", options: ["Makin banyak makin murah", "Gunakan listrik secara bijak", "Matikan selamanya", "Listrik tidak perlu"], answer: "Gunakan listrik secara bijak" },
-            { lvl: "SMP", type: "single", q: "Buku dibaca: A=4, B=6, C=5, D=7.\n\nRata-rata jumlah buku dibaca adalah...", options: ["4", "5", "5,5", "6"], answer: "5,5" },
-            { lvl: "SMP", type: "single", q: "Taman persegi panjang dengan panjang 20 m dan lebar 10 m.\n\nLuas taman tersebut adalah...", options: ["100 m²", "150 m²", "200 m²", "300 m²"], answer: "200 m²" },
-            { lvl: "SMP", type: "single", q: "Alasan pakai internet: Belajar 45%, Hiburan 30%, Sosmed 15%.\n\nKesimpulannya...", options: ["Sebagian besar untuk belajar", "Semua untuk hiburan", "Hanya tugas sekolah", "Sosmed terbesar"], answer: "Sebagian besar untuk belajar" },
-            { lvl: "SMP", type: "single", q: "Desa pakai lampu surya, setahun kemudian biaya listrik berkurang 40%.\n\nPernyataan yang didukung data ini...", options: ["Meningkatkan biaya", "Membantu penghematan", "Tidak butuh listrik lagi", "Hanya untuk kota"], answer: "Membantu penghematan" },
-            { lvl: "SMP", type: "single", q: "Pemakaian air (m³): Jan=120, Feb=100, Mar=90.\n\nPersentase penurunan dari Januari ke Maret?", options: ["20%", "25%", "30%", "35%"], answer: "25%" },
-            { lvl: "SMP", type: "single", q: "Dana: Literasi Rp3jt, Olahraga Rp4jt, Seni Rp3jt.\n\nDana olahraga mewakili...", options: ["20%", "30%", "40%", "50%"], answer: "40%" },
+            // --- SOAL LITERASI SMP ---
+            { lvl: "SMP", type: "single", stimulus: "Pemanenan air hujan merupakan teknik yang mulai populer di daerah perkotaan untuk mengatasi krisis air bersih. Proses ini dimulai dengan menangkap air hujan dari atap bangunan yang dialirkan melalui talang menuju tangki penyimpanan. Sebelum masuk ke tangki, air melewati filter sederhana untuk menyaring dedaunan dan debu. Air yang tertampung dapat digunakan untuk menyiram tanaman, mencuci kendaraan, atau kebutuhan toilet. Penggunaan filter karbon aktif dalam sistem ini terbukti efektif menghilangkan bau tidak sedap dan warna kekuningan pada air, sehingga air hasil tampungan menjadi lebih jernih dan layak pakai untuk keperluan non-konsumsi.", q: "Berdasarkan teks tersebut, fungsi utama dari penggunaan filter karbon aktif dalam sistem pemanenan air hujan adalah ....", options: ["Meningkatkan debit air yang mengalir ke tangki penyimpanan", "Menghilangkan bau tidak sedap dan warna kekuningan pada air", "Membunuh kuman dan bakteri berbahaya di dalam air hujan", "Memisahkan sampah plastik dan daun kering secara otomatis"], answer: "Menghilangkan bau tidak sedap dan warna kekuningan pada air" },
+            { lvl: "SMP", type: "single", stimulus: "Subak merupakan sistem irigasi tradisional di Bali yang tidak hanya sekadar teknik pengairan lahan, tetapi juga perwujudan dari filosofi Tri Hita Karana. Filosofi ini menekankan keseimbangan antara manusia, alam, dan Tuhan. Dalam praktiknya, subak dikelola secara demokratis oleh para petani dalam satu wilayah aliran air. Mereka mengatur pembagian air melalui 'pura' yang menjadi pusat koordinasi spiritual dan teknis. Keberadaan subak memastikan setiap petani mendapatkan akses air yang adil, sekaligus menjaga kelestarian ekosistem sawah dari eksploitasi berlebihan.", q: "Makna istilah 'eksploitasi' dalam konteks bacaan di atas adalah ....", options: ["Upaya pelestarian lingkungan secara berkelanjutan", "Pemanfaatan sumber daya secara berlebihan untuk keuntungan", "Pembagian sumber daya secara adil dan merata", "Penelitian mendalam terhadap ekosistem persawahan"], answer: "Pemanfaatan sumber daya secara berlebihan untuk keuntungan" },
+            { lvl: "SMP", type: "single", stimulus: "Intrusi air laut merupakan fenomena masuknya air laut ke dalam pori-pori batuan dan mencemari air tanah tawar. Di kota-kota besar seperti Jakarta, fenomena ini semakin mengkhawatirkan. Salah satu pemicu utamanya adalah pengambilan air tanah yang tidak terkendali melalui sumur-sumur bor oleh gedung perkantoran dan pemukiman. Ketika air tanah diambil secara besar-besaran, terjadi kekosongan ruang di bawah tanah yang kemudian diisi oleh rembesan air laut. Hal ini mengakibatkan air sumur warga di daerah pesisir menjadi payau dan tidak layak konsumsi.", q: "Penyebab utama terjadinya intrusi air laut di wilayah perkotaan menurut teks tersebut adalah ....", options: ["Naiknya permukaan air laut akibat pemanasan global", "Kurangnya pembangunan tanggul pemecah ombak di pantai", "Eksploitasi air tanah yang berlebihan melalui sumur bor", "Tersumbatnya saluran drainase kota oleh sampah domestik"], answer: "Eksploitasi air tanah yang berlebihan melalui sumur bor" },
+            { lvl: "SMP", type: "single", stimulus: "Ardi menatap dompet kulit hitam yang tergeletak di bawah bangku taman. Saat membukanya, ia terbelalak melihat tumpukan uang pecahan seratus ribu rupiah dan sebuah kartu identitas. Di kepalanya terlintas bayangan sepeda impian yang selama ini ia idamkan. Namun, saat melihat foto seorang kakek tua pada kartu identitas tersebut, hatinya berdesir. Ia membayangkan kakek itu mungkin sangat membutuhkan uang tersebut untuk biaya pengobatan. Tanpa ragu, Ardi segera menuju pos satpam terdekat untuk menyerahkan dompet tersebut.", q: "Pesan moral yang paling tepat direfleksikan dari tindakan tokoh Ardi adalah ....", options: ["Keinginan pribadi harus selalu didahulukan daripada urusan orang lain", "Kejujuran mendatangkan ketenangan batin meskipun ada keinginan yang dikorbankan", "Menolong orang lain harus menunggu sampai kita merasa memiliki kecukupan", "Barang yang ditemukan di tempat umum secara hukum menjadi milik penemunya"], answer: "Kejujuran mendatangkan ketenangan batin meskipun ada keinginan yang dikorbankan" },
+            { lvl: "SMP", type: "single", stimulus: "Dua siswa SMP di Jawa Tengah berhasil menciptakan bioplastik berbahan dasar pati singkong dan kulit udang. Inovasi ini bermula dari keprihatinan mereka terhadap tumpukan sampah plastik yang sulit terurai di lingkungan sekolah. Bioplastik ciptaan mereka terbukti dapat hancur secara alami di dalam tanah hanya dalam waktu 30 hari. Selain ramah lingkungan, biaya produksinya pun jauh lebih murah dibandingkan plastik konvensional. Penemuan ini diharapkan dapat menjadi alternatif solusi bagi permasalahan limbah plastik di Indonesia.", q: "Ide pokok yang mendasari teks berita di atas adalah ....", options: ["Bahaya limbah plastik konvensional bagi kesuburan tanah", "Keunggulan pati singkong dibandingkan bahan kimia industri", "Penemuan bioplastik ramah lingkungan oleh siswa SMP", "Prosedur pengolahan kulit udang menjadi bahan baku industri"], answer: "Penemuan bioplastik ramah lingkungan oleh siswa SMP" },
+            { lvl: "SMP", type: "single", stimulus: "Kecepatan penyebaran informasi di era digital bagaikan pisau bermata dua. Di satu sisi memudahkan akses pengetahuan, namun di sisi lain menjadi celah luas bagi peredaran hoaks. Sebagai generasi cerdas, kita tidak boleh langsung menelan mentah-mentah berita yang bombastis dan provokatif. Selalu lakukan verifikasi sumber dan cek fakta sebelum menekan tombol bagikan. Dengan bersikap kritis, kita tidak hanya melindungi diri sendiri, tetapi juga ikut menjaga ekosistem digital agar tetap sehat dan edukatif bagi semua orang.", q: "Tujuan utama penulis menyampaikan pesan dalam teks tersebut adalah ....", options: ["Menjelaskan sejarah perkembangan teknologi informasi di Indonesia", "Mengajak pembaca untuk bersikap kritis dan melakukan verifikasi informasi", "Mendata jumlah situs penyedia berita palsu yang meresahkan masyarakat", "Melarang penggunaan media sosial bagi remaja karena dampak negatifnya"], answer: "Mengajak pembaca untuk bersikap kritis dan melakukan verifikasi informasi" },
+            { lvl: "SMP", type: "single", stimulus: "Angin malam berhembus kencang, menggoyangkan dahan-dahan pohon tua di belakang rumah kayu itu. Suara jangkrik yang biasanya ramai, tiba-tiba senyap. Di kejauhan, hanya terdengar sayup-sayup suara aliran sungai yang beradu dengan bebatuan. Lampu minyak di atas meja berkedip-kedip tertiup angin yang menyelinap dari celah jendela, menciptakan bayangan-bayangan panjang yang menari di dinding. Keheningan itu terasa begitu kental, seolah waktu berhenti berputar di sudut desa terpencil ini.", q: "Latar suasana yang digambarkan dalam kutipan narasi tersebut adalah ....", options: ["Ceria dan penuh semangat", "Mencekam dan penuh ketakutan", "Sunyi dan tenang", "Sibuk dan hiruk-pikuk"], answer: "Sunyi dan tenang" },
+            { lvl: "SMP", type: "single", stimulus: "Novel 'Rasi Bintang' karya Citra Lestari menyajikan petualangan luar angkasa yang sangat imajinatif. Penulis berhasil mendeskripsikan teknologi masa depan dengan sangat mendetail sehingga pembaca seolah berada di dalam pesawat jet. Sayangnya, penggambaran karakter utama terasa sangat datar dan kurang memiliki latar belakang emosional yang kuat. Hal ini membuat pembaca sulit merasa terhubung dengan konflik batin yang dialami tokoh saat harus memilih antara misi dan keluarga. Meski demikian, alur ceritanya yang penuh kejutan tetap menjadikan buku ini layak dibaca bagi penggemar fiksi ilmiah.", q: "Kritik atau kekurangan yang disampaikan penulis ulasan terhadap novel tersebut adalah ....", options: ["Alur cerita yang membosankan dan terlalu mudah ditebak", "Deskripsi teknologi masa depan yang terlalu rumit dipahami", "Kurangnya kedalaman emosional dan latar belakang karakter utama", "Penggunaan bahasa yang terlalu kaku dan tidak komunikatif"], answer: "Kurangnya kedalaman emosional dan latar belakang karakter utama" },
+            { lvl: "SMP", type: "single", stimulus: "Taman Botani Sukamaju kini hadir dengan konsep baru yaitu 'Zero Waste Tourism'. Di area seluas 5 hektar ini, pengunjung dilarang membawa kemasan plastik sekali pakai. Sebagai gantinya, pengelola menyediakan stasiun pengisian air minum gratis di setiap sudut taman bagi pengunjung yang membawa botol sendiri. Selain itu, tersedia pula fasilitas jalur sepeda elektrik bagi pengunjung yang ingin berkeliling tanpa kelelahan. Untuk urusan edukasi, terdapat barcode di setiap pohon yang jika dipindai akan menampilkan informasi lengkap mengenai spesies dan manfaat pohon tersebut.", q: "Fasilitas yang disediakan pengelola taman untuk mendukung program edukasi kepada pengunjung adalah ....", options: ["Penyediaan stasiun pengisian air minum gratis", "Penyewaan sepeda elektrik untuk berkeliling taman", "Barcode di setiap pohon yang berisi informasi spesies", "Larangan membawa kemasan plastik sekali pakai"], answer: "Barcode di setiap pohon yang berisi informasi spesies" },
+            { lvl: "SMP", type: "single", stimulus: "Mencuci tangan dengan sabun adalah langkah paling sederhana namun krusial dalam mencegah penularan penyakit. Mengapa harus menggunakan sabun? Molekul sabun memiliki dua sisi: sisi yang suka air dan sisi yang suka lemak. Virus dan bakteri umumnya memiliki lapisan luar yang terbuat dari lemak. Saat kita menggosokkan sabun ke tangan, sisi penyuka lemak pada sabun akan menempel pada lapisan pelindung kuman tersebut dan menariknya hingga pecah. Tanpa lapisan pelindung, kuman akan mati dan kemudian hanyut bersama aliran air saat dibilas.", q: "Berdasarkan teks tersebut, alasan sabun sangat efektif mematikan kuman adalah ....", options: ["Aroma sabun yang menyengat tidak disukai oleh bakteri", "Molekul sabun mampu merusak lapisan lemak pelindung kuman", "Tekanan air saat membilas lebih kuat jika dibantu sabun", "Warna sabun mengandung zat kimia yang meracuni virus"], answer: "Molekul sabun mampu merusak lapisan lemak pelindung kuman" },
+            { lvl: "SMP", type: "single", stimulus: "Rara: 'Bayu, kenapa kamu tidak ikut makan siang bersama kami? Uang sakumu hilang lagi?'\nBayu: 'Tidak apa-apa, Ra. Aku sedang tidak lapar saja.'\nRara: 'Jangan bohong. Aku lihat tadi kamu memberikan bekalmu kepada pengemis di depan gerbang. Kamu sendiri belum makan sejak pagi, kan?'\nBayu: 'Dia terlihat lebih membutuhkan, Ra. Aku masih bisa makan nanti malam di rumah. Lagi pula, melihatnya makan dengan lahap sudah membuatku merasa kenyang.'", q: "Sifat atau watak tokoh Bayu yang tercermin dalam dialog tersebut adalah ....", options: ["Pemalu dan pendiam", "Rela berkorban dan dermawan", "Boros dan tidak teliti", "Keras kepala dan sombong"], answer: "Rela berkorban dan dermawan" },
+            { lvl: "SMP", type: "single", stimulus: "Penggunaan perangkat digital dalam proses pembelajaran di sekolah seringkali memicu perdebatan. Pihak yang setuju berpendapat bahwa gadget menyediakan akses tak terbatas ke sumber belajar global yang tidak bisa dipenuhi hanya oleh buku cetak. Namun, tantangannya adalah pengawasan. Tanpa pengawasan yang ketat, siswa justru terjebak dalam aktivitas non-edukatif seperti bermain game atau media sosial saat jam pelajaran. Oleh karena itu, digitalisasi sekolah harus dibarengi dengan literasi digital yang kuat bagi guru dan siswa agar perangkat tersebut benar-benar menjadi alat pendukung, bukan penghambat belajar.", q: "Argumen yang mendukung penggunaan gadget di sekolah menurut teks tersebut adalah ....", options: ["Gadget dapat menggantikan peran guru secara penuh di masa depan", "Akses informasi global yang tidak terbatas melalui perangkat digital", "Siswa menjadi lebih tenang di kelas karena asyik bermain game", "Digitalisasi sekolah dapat mengurangi anggaran pengadaan guru"], answer: "Akses informasi global yang tidak terbatas melalui perangkat digital" },
+            { lvl: "SMP", type: "single", stimulus: "Pemerintah Kota Gemilang meresmikan jembatan layang baru yang menghubungkan zona industri dengan pusat kota pada Senin pagi, 15 Januari 2024. Peresmian yang dipimpin langsung oleh Wali Kota ini menandai selesainya proyek yang dikerjakan selama dua tahun terakhir. Dengan adanya jembatan ini, waktu tempuh yang biasanya memakan waktu satu jam kini dapat dipangkas menjadi hanya 15 menit saja. Warga menyambut antusias karena kemacetan panjang yang biasa terjadi di perlintasan kereta api kini dapat teratasi.", q: "Peresmian jembatan layang baru di Kota Gemilang dilakukan pada ....", options: ["Selama dua tahun terakhir", "Setiap pagi hari kerja", "Senin pagi, 15 Januari 2024", "Setelah kemacetan berakhir"], answer: "Senin pagi, 15 Januari 2024" },
+            { lvl: "SMP", type: "single", stimulus: "Burung Cendrawasih yang dijuluki 'Bird of Paradise' merupakan kebanggaan tanah Papua. Burung ini sangat selektif dalam memilih tempat tinggal. Mereka hanya ditemukan di hutan-hutan tropis yang masih lebat dengan pepohonan yang tinggi dan tajuk yang rapat. Lingkungan yang tenang dan jauh dari aktivitas manusia sangat penting bagi Cendrawasih jantan untuk melakukan tarian ritual guna memikat betina. Sayangnya, pembukaan lahan hutan menjadi perkebunan mengancam keberadaan tempat mereka melakukan ritual unik ini.", q: "Berdasarkan teks tersebut, karakteristik habitat yang mutlak diperlukan burung Cendrawasih untuk bertahan hidup adalah ....", options: ["Daerah pesisir pantai dengan banyak pohon kelapa", "Hutan tropis lebat yang tenang dan jauh dari manusia", "Kawasan pegunungan salju yang bersuhu ekstrem", "Padang rumput terbuka yang memudahkan mereka terbang"], answer: "Hutan tropis lebat yang tenang dan jauh dari manusia" },
+            { lvl: "SMP", type: "single", stimulus: "Rekan-rekan siswa sekalian, lingkungan sekolah kita adalah rumah kedua kita. Namun, coba perhatikan sudut-sudut kelas dan kantin. Masih banyak sampah plastik berserakan seolah kita tidak peduli. Apakah kita akan membiarkan tempat kita belajar menjadi kumuh? Tentu tidak! Mari kita mulai dari diri sendiri, mulai dari memungut satu sampah hari ini. Perubahan besar tidak butuh kekuatan raksasa, ia hanya butuh kepedulian yang konsisten dari setiap individu di ruangan ini.", q: "Sikap yang ditunjukkan oleh pembicara dalam kutipan pidato tersebut adalah ....", options: ["Pesimis terhadap masa depan kebersihan sekolah", "Menghujat para siswa yang membuang sampah sembarangan", "Mengajak dan memotivasi dengan penuh kepedulian", "Acuh tak acuh karena masalah sampah sudah biasa terjadi"], answer: "Mengajak dan memotivasi dengan penuh kepedulian" },
+            { lvl: "SMP", type: "complex", stimulus: "Air bersih merupakan sumber daya yang terbatas. Data menunjukkan bahwa perilaku harian kita sangat memengaruhi ketersediaan air di masa depan. Mengganti kebiasaan mandi dari menggunakan gayung menjadi shower dapat menghemat air hingga lebih dari 30%. Selain itu, mencuci kendaraan dengan menggunakan ember jauh lebih efisien dibandingkan menggunakan selang air yang mengalir terus-menerus. Langkah kecil seperti mematikan kran saat menyabuni tangan juga berkontribusi besar dalam pelestarian air.", q: "Berdasarkan stimulus tersebut, tentukan benar atau salah pernyataan-pernyataan berikut dengan memberi tanda ceklis pada pilihan yang tepat ....", options: ["Mandi menggunakan shower jauh lebih boros air dibandingkan menggunakan gayung.", "Mencuci mobil dengan ember dapat menghemat air sebanyak 250 liter dibandingkan menggunakan selang.", "Penggunaan shower dapat menghemat air lebih dari sepertiga bagian dibandingkan pemakaian gayung.", "Mematikan kran saat menyabuni tangan tidak memberikan dampak signifikan bagi penghematan air."], answer: [1, 2] },
+            { lvl: "SMP", type: "complex", stimulus: "Sebuah percobaan dilakukan untuk mengamati pengaruh cahaya matahari terhadap pertumbuhan tanaman kacang hijau. Tanaman A diletakkan di area terbuka yang terkena sinar matahari langsung, sedangkan Tanaman B diletakkan di dalam kotak gelap. Setelah 7 hari, Tanaman A tumbuh dengan batang yang kokoh, daun berwarna hijau tua, dan tinggi 10 cm. Sementara itu, Tanaman B tumbuh sangat cepat hingga mencapai 20 cm, namun batangnya sangat lemah dan daunnya berwarna kuning pucat. Fenomena pada Tanaman B ini dalam botani disebut dengan etiolasi.", q: "Kesimpulan yang paling tepat berdasarkan hasil percobaan tersebut adalah ....", options: ["Cahaya matahari menghambat pertambahan tinggi batang secara ekstrem namun menguatkan struktur tanaman.", "Tanaman yang kekurangan cahaya matahari akan tumbuh lebih sehat karena tidak kepanasan.", "Warna hijau pada daun sangat bergantung pada keberadaan cahaya matahari untuk proses klorofil.", "Semua jenis tanaman akan mati seketika jika diletakkan di tempat gelap tanpa sinar matahari."], answer: [0, 2] },
+            { lvl: "SMP", type: "complex", stimulus: "Sudah tiga hari ini Pak Anwar bingung. Sebagai mandor bangunan, ia didesak oleh pemilik proyek untuk menyelesaikan jembatan desa sebelum musim hujan tiba. Namun, di sisi lain, para pekerjanya mulai kelelahan karena harus bekerja lembur setiap malam. Jika ia memaksa, ia takut para pekerja akan jatuh sakit atau kualitas bangunan menurun. Jika ia memberi istirahat, jembatan mungkin tidak akan selesai tepat waktu dan ia terancam denda besar. Pak Anwar merasa terjepit di antara tanggung jawab profesional dan kemanusiaan.", q: "Pernyataan yang secara akurat menggambarkan konflik yang dialami Pak Anwar dalam cerita tersebut adalah ....", options: ["Konflik batin antara rasa kasihan kepada pekerja dan kewajiban menyelesaikan proyek.", "Konflik sosial antara Pak Anwar dengan penduduk desa yang memprotes pembangunan jembatan.", "Konflik fisik antara Pak Anwar dan pemilik proyek yang berujung pada pertengkaran hebat.", "Konflik eksternal terhadap alam yaitu ancaman musim hujan yang dapat menghambat pekerjaan."], answer: [0, 3] },
+            { lvl: "SMP", type: "complex", stimulus: "Membaca bukan hanya sekadar hobi, melainkan investasi jangka panjang bagi otak. Saat membaca, otak melakukan sinkronisasi untuk memproses simbol menjadi makna, yang melatih fokus dan konsentrasi. Penelitian menunjukkan bahwa individu yang rutin membaca memiliki kosakata yang lebih luas dan kemampuan empati yang lebih tinggi. Hal ini dikarenakan pembaca sering menempatkan diri mereka pada posisi tokoh dalam cerita. Selain itu, membaca sebelum tidur terbukti dapat menurunkan tingkat stres dan membantu tidur lebih nyenyak dibandingkan bermain ponsel.", q: "Manfaat membaca yang sesuai dengan isi teks di atas adalah ....", options: ["Meningkatkan kemampuan seseorang untuk memahami perasaan orang lain (empati).", "Menjadi satu-satunya cara untuk meningkatkan kecerdasan intelektual manusia.", "Membantu meningkatkan kualitas tidur dan mengurangi tekanan mental (stres).", "Mempercepat proses penglihatan dalam mengenali warna-warna di lingkungan sekitar."], answer: [0, 2] },
+            { lvl: "SMP", type: "complex", stimulus: "Teks 1: 'Diharapkan kepada seluruh peserta didik agar senantiasa menjaga kebersihan lingkungan sekolah demi terciptanya kenyamanan bersama dalam proses belajar mengajar.'\n\nTeks 2: 'Halo Sobat Sekolah! Yuk, jaga kebersihan kelas kita biar belajarnya makin asyik dan nggak keganggu bau sampah. Malu kan kalau sekolah kita kotor?'", q: "Perbandingan yang tepat mengenai kedua teks tersebut adalah ....", options: ["Teks 1 menggunakan bahasa baku yang bersifat formal dan instruktif.", "Teks 2 lebih efektif digunakan dalam surat resmi undangan kepada wali murid.", "Teks 2 menggunakan gaya bahasa populer yang bertujuan mendekati audiens remaja.", "Kedua teks tersebut memiliki tujuan yang berbeda, yaitu satu melarang dan satu mengizinkan."], answer: [0, 2] },
+
+            // --- SOAL NUMERASI SMP ---
+            { lvl: "SMP", type: "single", stimulus: "Sebuah stadion baru sedang dibangun dengan sistem penataan kursi yang unik. Pada baris paling depan (baris pertama) terdapat 20 kursi. Pengelola stadion memutuskan untuk menambah 4 kursi lebih banyak pada setiap baris berikutnya dibandingkan baris sebelumnya. Hal ini dilakukan agar penonton di baris belakang tetap memiliki sudut pandang yang luas ke arah lapangan.", q: "Berdasarkan pola penataan tersebut, jumlah kursi yang tersedia pada baris ke-10 adalah ....", options: ["52 kursi", "56 kursi", "60 kursi", "64 kursi"], answer: "56 kursi" },
+            { lvl: "SMP", type: "single", stimulus: "Dalam matematika, kita mengenal berbagai jenis kalimat terbuka. Kalimat terbuka yang memiliki hubungan sama dengan dan hanya memiliki satu variabel berpangkat satu disebut persamaan linear satu variabel. Konsep ini sangat penting untuk menyelesaikan masalah sehari-hari seperti menghitung harga barang atau menentukan sisa tabungan.", q: "Di antara bentuk-bentuk di bawah ini, yang merupakan persamaan linear satu variabel adalah ....", options: ["2x + 3y = 10", "x^2 - 4 = 0", "3a + 5 = 14", "2p + 7 < 15"], answer: "3a + 5 = 14" },
+            { lvl: "SMP", type: "single", stimulus: "Ibu ingin membuat kue bolu untuk acara arisan. Dalam resep standar untuk 1 porsi (10 potong kue), dibutuhkan 250 gram tepung terigu dan 4 butir telur. Namun, tamu yang akan hadir diperkirakan cukup banyak sehingga Ibu perlu membuat 25 potong kue agar semua tamu kebagian.", q: "Jumlah tepung terigu yang harus disiapkan Ibu agar rasio bahan tetap sesuai dengan resep asli adalah ....", options: ["500 gram", "625 gram", "750 gram", "1.000 gram"], answer: "625 gram" },
+            { lvl: "SMP", type: "single", stimulus: "Keluarga Budi memiliki tandon air berbentuk tabung dengan kapasitas total 1.200 liter. Karena ada pembersihan berkala, tandon tersebut dikosongkan. Budi kemudian menyalakan pompa air yang memiliki debit konstan 40 liter per menit untuk mengisi kembali tandon tersebut hingga penuh.", q: "Waktu yang diperlukan oleh pompa air untuk mengisi tandon tersebut dari keadaan kosong hingga penuh adalah ....", options: ["20 menit", "30 menit", "40 menit", "60 menit"], answer: "30 menit" },
+            { lvl: "SMP", type: "complex", stimulus: "Data suhu udara di Kota A selama seminggu tercatat sebagai berikut: 28°C, 29°C, 31°C, 30°C, 28°C, 32°C, dan 30°C. Perubahan suhu ini sangat dipengaruhi oleh intensitas cahaya matahari dan kelembapan udara di wilayah tersebut.", q: "Berdasarkan data suhu tersebut, pilihlah pernyataan-pernyataan berikut yang bernilai benar ....", options: ["Rata-rata (mean) suhu udara selama seminggu adalah 29,7°C.", "Median dari data suhu udara tersebut adalah 30°C.", "Modus dari data suhu udara tersebut adalah 28°C dan 30°C.", "Jangkauan (range) suhu udara di kota tersebut adalah 5°C."], answer: [1, 2] },
+            { lvl: "SMP", type: "single", stimulus: "Sebuah aplikasi transportasi online menetapkan tarif dasar (biaya buka pintu) sebesar Rp5.000,00. Selanjutnya, penumpang dikenakan biaya tambahan sebesar Rp3.000,00 untuk setiap kilometer jarak yang ditempuh. Jika 'x' menyatakan jarak dalam kilometer dan 'f(x)' menyatakan total tarif dalam rupiah.", q: "Persamaan fungsi linear yang paling tepat untuk menggambarkan total tarif transportasi tersebut adalah ....", options: ["f(x) = 3.000x + 5.000", "f(x) = 5.000x + 3.000", "f(x) = 8.000x", "f(x) = 3.000x - 5.000"], answer: "f(x) = 3.000x + 5.000" },
+            { lvl: "SMP", type: "single", stimulus: "Rina memiliki uang Rp150.000,00 untuk membeli buku tulis dan satu buah tas sekolah seharga Rp60.000,00. Jika harga satu buku tulis adalah Rp7.500,00, Rina ingin mengetahui berapa maksimal jumlah buku tulis yang bisa ia beli agar sisa uangnya cukup untuk ongkos pulang.", q: "Banyaknya buku tulis (n) yang dapat dibeli Rina agar total belanjanya tidak melebihi uang yang dimilikinya dapat dinyatakan dengan ....", options: ["n ≤ 10", "n ≤ 12", "n ≤ 15", "n ≤ 20"], answer: "n ≤ 12" },
+            { lvl: "SMP", type: "single", stimulus: "Seorang arsitek lanskap merancang taman belakang rumah berbentuk persegi panjang dengan ukuran 10 meter x 8 meter. Di tengah taman tersebut akan dibuat kolam ikan berbentuk lingkaran dengan diameter 7 meter (menggunakan π = 22/7). Sisa lahan di luar kolam akan ditanami rumput hias.", q: "Luas lahan yang akan ditanami rumput hias setelah dikurangi area kolam adalah ....", options: ["38,5 m²", "41,5 m²", "42,5 m²", "44,5 m²"], answer: "41,5 m²" },
+            { lvl: "SMP", type: "single", stimulus: "Rata-rata nilai ujian matematika dari 9 orang siswa adalah 75. Kemudian, seorang siswa bernama Andi mengikuti ujian susulan dan nilainya digabungkan dengan kelompok tersebut. Setelah nilai Andi dimasukkan, rata-rata nilai ujian matematika kelompok tersebut menjadi 77.", q: "Nilai ujian matematika yang diperoleh Andi dalam ujian susulan tersebut adalah ....", options: ["85", "90", "95", "97"], answer: "95" },
+            { lvl: "SMP", type: "single", stimulus: "Santi ingin membungkus kado ulang tahun untuk temannya. Ia menggunakan kotak kado yang berbentuk limas segiempat beraturan. Alas kotak tersebut berbentuk persegi dengan panjang sisi 12 cm, sedangkan tinggi kotak (dari alas ke puncak) adalah 15 cm.", q: "Kapasitas ruang atau volume yang dimiliki oleh kotak kado tersebut adalah ....", options: ["720 cm³", "1.080 cm³", "2.160 cm³", "2.400 cm³"], answer: "720 cm³" },
+            { lvl: "SMP", type: "single", stimulus: "Dalam penelitian biologi, para ilmuwan mengukur diameter tiga jenis bakteri yang berbeda. Bakteri A memiliki diameter 2,5 x 10^-6 meter, Bakteri B memiliki diameter 1,8 x 10^-5 meter, dan Bakteri C memiliki diameter 9,2 x 10^-7 meter. Pemahaman tentang skala ini membantu ilmuwan menentukan jenis mikroskop yang diperlukan.", q: "Urutan jenis bakteri dari yang memiliki ukuran diameter terkecil hingga terbesar adalah ....", options: ["Bakteri A, Bakteri B, Bakteri C", "Bakteri C, Bakteri A, Bakteri B", "Bakteri B, Bakteri A, Bakteri C", "Bakteri C, Bakteri B, Bakteri A"], answer: "Bakteri C, Bakteri A, Bakteri B" },
+            { lvl: "SMP", type: "single", stimulus: "Andi sedang merencanakan perjalanan dari Kota P ke Kota Q menggunakan peta. Pada peta tersebut, tertulis skala 1 : 2.500.000. Setelah diukur dengan penggaris, jarak antara Kota P dan Kota Q pada peta adalah 6 cm.", q: "Jarak sebenarnya antara Kota P dan Kota Q yang harus ditempuh Andi adalah ....", options: ["15 km", "150 km", "1.500 km", "15.000 km"], answer: "150 km" },
+            { lvl: "SMP", type: "complex", stimulus: "Seorang pemain basket melempar bola ke arah ring. Ketinggian bola (h) dalam meter sebagai fungsi waktu (t) dalam detik dinyatakan dengan persamaan f(t) = -t^2 + 4t + 2. Persamaan ini menggambarkan bagaimana gravitasi mempengaruhi ketinggian bola sejak dilepaskan dari tangan pemain.", q: "Berdasarkan persamaan lintasan bola tersebut, manakah di antara pernyataan berikut yang benar ....", options: ["Ketinggian bola saat awal dilemparkan (t = 0) adalah 2 meter.", "Bola mencapai ketinggian maksimum pada detik ke-4.", "Ketinggian maksimum yang dapat dicapai bola adalah 6 meter.", "Bola akan menyentuh tanah pada saat t = 2 detik."], answer: [0, 2] },
+            { lvl: "SMP", type: "single", stimulus: "Sebuah survei dilakukan di kelas 8 SMP Merdeka untuk mengetahui hobi para siswa. Hasil survei menunjukkan bahwa dari 40 siswa, 25% gemar bermain basket, 35% gemar musik, 20% gemar melukis, dan sisanya gemar membaca.", q: "Berdasarkan data tersebut, jumlah siswa yang memiliki hobi membaca adalah ....", options: ["6 orang", "8 orang", "10 orang", "12 orang"], answer: "8 orang" },
+            { lvl: "SMP", type: "single", stimulus: "Pak Rahmat ingin mengganti ubin di kamar tidurnya yang berbentuk persegi dengan panjang sisi 4 meter. Ia memilih ubin keramik berukuran 40 cm x 40 cm. Harga satu buah ubin adalah Rp12.500,00 dan Pak Rahmat disarankan membeli tambahan 5% dari total ubin untuk cadangan jika ada yang pecah.", q: "Total biaya minimal yang harus dikeluarkan Pak Rahmat untuk membeli ubin (termasuk cadangan) adalah ....", options: ["Rp1.250.000,00", "Rp1.312.500,00", "Rp1.425.000,00", "Rp1.500.000,00"], answer: "Rp1.312.500,00" },
+            { lvl: "SMP", type: "single", stimulus: "Di sebuah pulau terpencil, populasi sejenis burung langka diamati setiap tahun. Pada tahun pertama ditemukan 10 ekor, tahun kedua 20 ekor, tahun ketiga 40 ekor, dan tahun keempat 80 ekor. Ilmuwan menyimpulkan bahwa pertumbuhan populasi ini mengikuti pola barisan geometri karena ketersediaan makanan yang melimpah.", q: "Jika pola pertumbuhan ini tetap stabil, prediksi populasi burung tersebut pada tahun ketujuh adalah ....", options: ["320 ekor", "560 ekor", "640 ekor", "1.280 ekor"], answer: "640 ekor" },
+            { lvl: "SMP", type: "complex", stimulus: "Jasa pengiriman 'Cepat Sampai' memiliki aturan tarif: biaya dasar Rp10.000,00 untuk 2 kg pertama. Jika berat paket lebih dari 2 kg, setiap kelebihan 1 kg (atau bagian darinya) dikenakan tambahan biaya Rp4.000,00 per kg. Hubungan ini membentuk sebuah fungsi linear untuk berat paket di atas 2 kg.", q: "Berdasarkan aturan tarif pengiriman tersebut, manakah pernyataan yang benar mengenai biaya pengiriman (B) untuk berat paket (w) ....", options: ["Biaya untuk mengirim paket seberat 1,5 kg adalah Rp10.000,00.", "Jika berat paket 5 kg, maka total biayanya adalah Rp22.000,00.", "Rumus biaya untuk w > 2 adalah B(w) = 10.000 + 4.000(w - 2).", "Paket dengan berat 4,2 kg akan dikenakan biaya yang sama dengan paket 4,8 kg."], answer: [0, 1, 2] },
+            { lvl: "SMP", type: "complex", stimulus: "Seorang siswa melakukan eksperimen dengan dua wadah berbeda untuk menampung air dari kran yang sama. Wadah A berbentuk silinder dengan jari-jari 10 cm dan tinggi 20 cm. Wadah B berbentuk balok dengan panjang 20 cm, lebar 15 cm, dan tinggi 20 cm. Kran mengalirkan air dengan debit 1 liter per menit.", q: "Setelah melakukan analisis terhadap volume kedua wadah tersebut (menggunakan π = 3,14), pernyataan yang tepat adalah ....", options: ["Wadah A memiliki kapasitas volume lebih besar daripada wadah B.", "Wadah B akan penuh lebih cepat dibandingkan wadah A.", "Wadah A akan terisi penuh dalam waktu sekitar 6,28 menit.", "Kedua wadah akan penuh dalam waktu yang tepat sama karena tingginya sama."], answer: [0, 2] },
+            { lvl: "SMP", type: "single", stimulus: "Dalam sebuah kotak terdapat 12 bola merah, 8 bola biru, dan 10 bola kuning. Seseorang akan mengambil satu bola secara acak dari kotak tersebut tanpa melihat isinya. Eksperimen ini diulang beberapa kali untuk membuktikan konsep peluang dalam statistika.", q: "Peluang teoretis terambilnya bola berwarna biru dari dalam kotak tersebut adalah ....", options: ["4/15", "1/3", "2/5", "3/10"], answer: "4/15" },
+            { lvl: "SMP", type: "complex", stimulus: "Sebuah truk logistik memiliki kapasitas angkut maksimal 2.000 kg. Truk tersebut sudah memuat 10 kotak besar yang masing-masing beratnya 120 kg. Sopir truk ingin menambah muatan berupa karung beras yang masing-masing beratnya 50 kg untuk memaksimalkan kapasitas angkut.", q: "Manakah pernyataan yang sesuai dengan kondisi batas kemampuan angkut truk tersebut ....", options: ["Truk masih mampu mengangkut maksimal 16 karung beras lagi.", "Pertidaksamaan yang mewakili kondisi ini adalah 1.200 + 50x ≤ 2.000.", "Jika sopir memaksakan membawa 20 karung beras, maka truk akan kelebihan muatan.", "Berat sisa kapasitas truk setelah memuat kotak adalah 800 kg."], answer: [0, 1, 3] },
 
             // --- SOAL SMP-SMA ---
             { lvl: "SMP-SMA", type: "single", q: "Perpustakaan digital mudahkan akses belajar. Namun, siswa perlu periksa kredibilitas sumber informasi.\n\nPesan utamanya adalah...", options: ["Semua info dipercaya", "Hindari perpus digital", "Akses mudah diimbangi kemampuan verifikasi", "Buku cetak tak perlu"], answer: "Akses mudah diimbangi kemampuan verifikasi" },
@@ -454,14 +471,6 @@
             isGameOver: false
         };
 
-        // SFX Library (Google Actions Sounds - Sangat Stabil)
-        const SFX_URLS = {
-            'correct': 'https://actions.google.com/sounds/v1/cartoon/bell_ding.ogg',
-            'wrong': 'https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg',
-            'merge': 'https://actions.google.com/sounds/v1/cartoon/pop.ogg',
-            'coin': 'https://actions.google.com/sounds/v1/cartoon/magic_chime_cord.ogg'
-        };
-
         // UI Update Lobby
         function updatePlayerNames() {
             const num = parseInt(document.getElementById('select-players').value);
@@ -474,13 +483,12 @@
 
         let isMuted = false;
         
-        function playSound(type) {
+        function playSound(id) {
             if (isMuted) return;
-            const url = SFX_URLS[type];
-            if (url) {
-                const audio = new Audio(url);
-                audio.volume = 0.8; // Volume SFX sedikit dikeraskan
-                audio.play().catch(e => console.log("SFX play prevented:", e));
+            const audio = document.getElementById(`sfx-${id}`);
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log("Audio play error:", e));
             }
         }
 
@@ -506,35 +514,43 @@
             const bgm = document.getElementById('bgm-audio');
             bgm.volume = 0.5;
             bgm.play().catch(e => console.log(e));
-
-            if(startConfig.players === 2) {
-                const controls = document.getElementById('global-controls');
-                controls.classList.remove('left-1/2', '-translate-x-1/2');
-                controls.classList.add('left-[25%]', '-translate-x-1/2'); 
-            }
             
             initializeGameData();
         }
 
         function toggleMute() {
             const bgm = document.getElementById('bgm-audio');
-            const slider = document.getElementById('bgm-volume');
             isMuted = !isMuted;
             bgm.muted = isMuted;
             
-            if (isMuted) {
-                document.getElementById('btn-mute').innerText = '🔇';
-                slider.classList.add('opacity-50');
-            } else {
-                document.getElementById('btn-mute').innerText = '🔊';
-                slider.classList.remove('opacity-50');
-                bgm.play().catch(e => console.log(e));
-            }
+            // Perbarui semua tombol mute jika ada (karena di 1 pemain dan 2 pemain di render dari JS)
+            const muteBtns = document.querySelectorAll('.btn-mute-class');
+            const sliders = document.querySelectorAll('.bgm-volume-class');
+            
+            muteBtns.forEach(btn => btn.innerText = isMuted ? '🔇' : '🔊');
+            
+            sliders.forEach(slider => {
+                if (isMuted) slider.classList.add('opacity-50');
+                else slider.classList.remove('opacity-50');
+            });
+            
+            if (!isMuted) bgm.play().catch(e => console.log(e));
         }
 
         function changeVolume(val) {
             const bgm = document.getElementById('bgm-audio');
             bgm.volume = parseFloat(val);
+            
+            // Sesuaikan juga volume SFX agar tidak terlalu keras
+            const sfxVolume = Math.min(1, parseFloat(val) + 0.3);
+            ['sfx-correct', 'sfx-wrong', 'sfx-merge', 'sfx-coin'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.volume = sfxVolume;
+            });
+            
+            // Sinkronisasi semua slider di layar
+            const sliders = document.querySelectorAll('.bgm-volume-class');
+            sliders.forEach(slider => slider.value = val);
             
             // Auto unmute jika volume dibesarkan dari 0
             if (val > 0 && isMuted) {
@@ -628,13 +644,32 @@
                     
                     <div id="quiz-container-${p.index}" class="absolute inset-0 z-50 hidden"></div>
 
-                    <div class="bg-white/95 p-1.5 md:p-2 border-b-2 border-slate-200 flex justify-between items-center shrink-0 z-10">
-                        <div class="flex flex-col ml-1">
+                    <!-- HEADER PEMAIN & KONTROL GLOBAL DI TENGAH -->
+                    <div class="bg-white/95 p-1.5 md:p-2 border-b-2 border-slate-200 flex justify-between items-center shrink-0 z-10 h-14 md:h-16">
+                        
+                        <!-- Kiri: Info Pemain -->
+                        <div class="flex flex-col ml-1 flex-1 items-start">
                             <span class="font-bold text-sm md:text-lg text-indigo-800 leading-tight">${p.name}</span>
                             <span id="p${p.index}-level" class="text-[10px] md:text-xs font-bold bg-indigo-500 text-white px-2 py-0.5 rounded-full w-max">LVL ${p.level}</span>
                         </div>
                         
-                        <div class="flex gap-1 md:gap-2 items-center">
+                        <!-- Tengah: Kontrol Global (Hanya ditaruh di Pemain 1 agar tidak ganda di layar) -->
+                        <div class="flex-1 flex justify-center items-center shrink-0">
+                            ${p.index === 0 ? `
+                            <div class="flex items-center gap-1 md:gap-3 bg-slate-100 px-3 py-1 rounded-full border border-slate-300 shadow-inner scale-90 md:scale-100">
+                                <div class="flex items-center gap-1">
+                                    <button onclick="toggleMute()" class="btn-mute-class w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-lg" title="Mute/Unmute">🔊</button>
+                                    <input type="range" min="0" max="1" step="0.05" value="0.5" class="bgm-volume-class w-16 md:w-24 accent-blue-500 cursor-pointer" oninput="changeVolume(this.value)" title="Volume Musik">
+                                </div>
+                                <div class="w-px h-5 bg-slate-300"></div>
+                                <button onclick="goHome()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-lg" title="Kembali ke Menu (Home)">🏠</button>
+                                <button onclick="toggleFullscreen()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-lg group" title="Layar Penuh">📺</button>
+                            </div>
+                            ` : ''}
+                        </div>
+
+                        <!-- Kanan: Koin & Energi -->
+                        <div class="flex gap-1 md:gap-2 items-center justify-end flex-1">
                             <div class="flex items-center bg-yellow-100 px-2 py-1 rounded-full shadow-inner border border-yellow-200 h-max">
                                 <img src="https://i.imgur.com/fNuQRvo.png" class="w-5 h-5 md:w-6 md:h-6 mr-1"><span id="p${p.index}-coins" class="font-bold text-yellow-700 text-base md:text-xl">${p.coins}</span>
                             </div>
@@ -645,6 +680,7 @@
                                 <button onclick="openQuizModal(${p.index})" class="text-[9px] md:text-[10px] font-bold bg-green-500 text-white px-2 py-0.5 rounded-full mt-1 hover:bg-green-600 active:scale-95 transition tracking-wider w-full shadow-sm">KUMPULKAN ENERGI</button>
                             </div>
                         </div>
+
                     </div>
 
                     <div id="p${p.index}-orders" class="flex gap-2 p-2 overflow-x-auto min-h-[90px] md:min-h-[110px] shrink-0 bg-indigo-50/60 items-center justify-start border-b border-indigo-100 z-10">
@@ -1055,7 +1091,7 @@
                     p.boardData[ptr.sourceIndex] = null;
                     renderBoard(ptr.playerIndex);
                     actionTaken = true;
-                    playSound('wrong'); // Suara tong sampah
+                    playSound('wrong'); 
                 }
             } 
 
