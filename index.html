@@ -112,45 +112,41 @@
 </head>
 <body class="w-screen h-screen flex flex-col bg-custom text-slate-800">
 
-    <!-- Global Controls -->
-    <div id="global-controls" class="fixed top-4 z-[999] flex gap-3 justify-center left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-xl border-2 border-slate-300 items-center">
-        <!-- Audio BGM -->
+    <!-- Container Audio (Tersembunyi) -->
+    <div class="hidden">
         <audio id="bgm-audio" loop preload="auto">
             <source src="https://github.com/belajarituseru39-gif/lagu-teramera/raw/refs/heads/main/Tera%20Mera%20Quest.mp3" type="audio/mpeg">
         </audio>
-        
-        <!-- Volume Controls -->
-        <div class="flex items-center gap-2 border-r-2 border-slate-300 pr-3">
-            <button onclick="toggleMute()" id="btn-mute" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-xl" title="Mute/Unmute">
-                🔊
-            </button>
-            <input type="range" id="bgm-volume" min="0" max="1" step="0.05" value="0.5" class="w-24 md:w-32 accent-blue-500 cursor-pointer" oninput="changeVolume(this.value)" title="Volume Musik">
-        </div>
-
-        <button onclick="goHome()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-xl" title="Kembali ke Menu (Home)">
-            🏠
-        </button>
-        <button onclick="toggleFullscreen()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-xl group" title="Layar Penuh">
-            <span class="group-hover:hidden">🔲</span>
-            <span class="hidden group-hover:inline">📺</span>
-        </button>
+        <audio id="sfx-correct" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
+        <audio id="sfx-wrong" src="https://assets.mixkit.co/active_storage/sfx/2832/2832-preview.mp3" preload="auto"></audio>
+        <audio id="sfx-merge" src="https://assets.mixkit.co/active_storage/sfx/2673/2673-preview.mp3" preload="auto"></audio>
+        <audio id="sfx-coin" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3" preload="auto"></audio>
     </div>
 
     <!-- Global Timer Bar -->
-    <div id="global-bar" class="w-full bg-slate-800 text-white flex justify-center items-center py-1.5 font-bold text-xl tracking-widest hidden shadow-md z-40 shrink-0 mt-16">
+    <div id="global-bar" class="w-full bg-slate-800 text-white flex justify-center items-center py-1.5 font-bold text-xl tracking-widest hidden shadow-md z-40 shrink-0">
         WAKTU TERSISA: <span id="timer-text" class="ml-2 text-yellow-400">00:00</span>
     </div>
 
     <!-- Main Game Container (Grid) -->
-    <main id="main-container" class="flex-1 w-full h-full p-2 grid gap-2 overflow-hidden z-10 relative pt-16">
+    <main id="main-container" class="flex-1 w-full h-full p-2 grid gap-2 overflow-hidden z-10 relative">
         <!-- Player Quadrants will be generated here -->
     </main>
 
     <!-- Start Menu / Lobby -->
     <div id="start-screen" class="fixed inset-0 bg-slate-800/80 backdrop-blur-md flex flex-col md:flex-row justify-center items-center z-[100] p-4 md:p-8 gap-8 overflow-y-auto">
         
+        <!-- Kontrol Halaman Awal (Kiri Atas) -->
+        <div class="absolute top-4 left-4 md:top-6 md:left-6 flex items-center gap-1 md:gap-2 bg-white/95 backdrop-blur-md px-3 py-2 rounded-full shadow-xl border-2 border-slate-300 z-[110]">
+            <button onclick="toggleMute()" class="btn-mute-class w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-lg" title="Mute/Unmute">🔊</button>
+            <input type="range" min="0" max="1" step="0.05" value="0.5" class="bgm-volume-class w-16 md:w-24 accent-blue-500 cursor-pointer" oninput="changeVolume(this.value)" title="Volume Musik">
+            <div class="w-px h-5 bg-slate-300 mx-1"></div>
+            <button onclick="goHome()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-lg" title="Kembali ke Menu (Home)">🏠</button>
+            <button onclick="toggleFullscreen()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-lg group" title="Layar Penuh">📺</button>
+        </div>
+
         <!-- Left Side: Logo & Narasi -->
-        <div class="flex flex-col items-center justify-center flex-1 max-w-xl text-center">
+        <div class="flex flex-col items-center justify-center flex-1 max-w-xl text-center mt-16 md:mt-0">
             <img src="https://i.imgur.com/X5S3Ilb.png" alt="Tera Mera Kitchen Quest" class="max-w-[70%] md:max-w-sm mb-6 drop-shadow-2xl hover:scale-105 transition duration-500">
             <h1 class="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-md">Tera Mera Kitchen Quest</h1>
             <p class="text-slate-100 text-lg md:text-xl font-medium bg-black/30 p-6 rounded-3xl border border-white/20 backdrop-blur-sm shadow-xl leading-relaxed">
@@ -437,7 +433,7 @@
             { lvl: "SMP", type: "single", stimulus: "Dalam sebuah kotak terdapat 12 bola merah, 8 bola biru, dan 10 bola kuning. Seseorang akan mengambil satu bola secara acak dari kotak tersebut tanpa melihat isinya. Eksperimen ini diulang beberapa kali untuk membuktikan konsep peluang dalam statistika.", q: "Peluang teoretis terambilnya bola berwarna biru dari dalam kotak tersebut adalah ....", options: ["4/15", "1/3", "2/5", "3/10"], answer: "4/15" },
             { lvl: "SMP", type: "complex", stimulus: "Sebuah truk logistik memiliki kapasitas angkut maksimal 2.000 kg. Truk tersebut sudah memuat 10 kotak besar yang masing-masing beratnya 120 kg. Sopir truk ingin menambah muatan berupa karung beras yang masing-masing beratnya 50 kg untuk memaksimalkan kapasitas angkut.", q: "Manakah pernyataan yang sesuai dengan kondisi batas kemampuan angkut truk tersebut ....", options: ["Truk masih mampu mengangkut maksimal 16 karung beras lagi.", "Pertidaksamaan yang mewakili kondisi ini adalah 1.200 + 50x ≤ 2.000.", "Jika sopir memaksakan membawa 20 karung beras, maka truk akan kelebihan muatan.", "Berat sisa kapasitas truk setelah memuat kotak adalah 800 kg."], answer: [0, 1, 3] },
 
-            // --- SOAL LITERASI SMA (BARU - FORMAT ANBK) ---
+            // --- SOAL LITERASI SMA ---
             { lvl: "SMA", type: "single", stimulus: "Kehadiran kecerdasan buatan (AI) telah membawa perubahan besar di berbagai sektor industri. Fenomena ini sering disebut sebagai disrupsi digital yang memaksa pelaku usaha konvensional untuk beradaptasi atau tertinggal. Sebagian ahli berpendapat bahwa AI akan menggantikan peran manusia dalam tugas-tugas administratif yang repetitif. Namun, optimisme tetap muncul bahwa kolaborasi antara manusia dan mesin akan menciptakan efisiensi yang belum pernah ada sebelumnya. Penting bagi institusi pendidikan untuk mengintegrasikan kurikulum berbasis teknologi guna menyiapkan generasi masa depan.", q: "Makna istilah 'disrupsi' dalam kutipan teks tersebut merujuk pada ....", options: ["Gangguan yang menyebabkan kekacauan sistem", "Perubahan mendasar yang mencabut sistem lama sampai ke akar-akarnya", "Proses pembangunan infrastruktur digital secara bertahap", "Peningkatan kualitas produksi melalui mesin otomatis", "Kerjasama antara manusia dengan kecerdasan buatan"], answer: "Perubahan mendasar yang mencabut sistem lama sampai ke akar-akarnya" },
             { lvl: "SMA", type: "single", stimulus: "Kehadiran kecerdasan buatan (AI) telah membawa perubahan besar di berbagai sektor industri. Fenomena ini sering disebut sebagai disrupsi digital yang memaksa pelaku usaha konvensional untuk beradaptasi atau tertinggal. Sebagian ahli berpendapat bahwa AI akan menggantikan peran manusia dalam tugas-tugas administratif yang repetitif. Namun, optimisme tetap muncul bahwa kolaborasi antara manusia dan mesin akan menciptakan efisiensi yang belum pernah ada sebelumnya. Penting bagi institusi pendidikan untuk mengintegrasikan kurikulum berbasis teknologi guna menyiapkan generasi masa depan.", q: "Ide pokok yang terkandung dalam paragraf tersebut adalah ....", options: ["Pentingnya kurikulum berbasis teknologi di sekolah", "Penggantian tenaga manusia oleh robot di perkantoran", "Dampak kehadiran kecerdasan buatan terhadap sektor industri", "Cara beradaptasi pelaku usaha konvensional di era digital", "Perbedaan pendapat para ahli mengenai efisiensi mesin"], answer: "Dampak kehadiran kecerdasan buatan terhadap sektor industri" },
             { lvl: "SMA", type: "single", stimulus: "Kehadiran kecerdasan buatan (AI) telah membawa perubahan besar di berbagai sektor industri. Fenomena ini sering disebut sebagai disrupsi digital yang memaksa pelaku usaha konvensional untuk beradaptasi atau tertinggal. Sebagian ahli berpendapat bahwa AI akan menggantikan peran manusia dalam tugas-tugas administratif yang repetitif. Namun, optimisme tetap muncul bahwa kolaborasi antara manusia dan mesin akan menciptakan efisiensi yang belum pernah ada sebelumnya. Penting bagi institusi pendidikan untuk mengintegrasikan kurikulum berbasis teknologi guna menyiapkan generasi masa depan.", q: "Pernyataan penutup mengenai kurikulum pendidikan dalam teks tersebut dianggap relevan dengan kondisi sekarang karena ....", options: ["Semua pekerjaan di masa depan pasti akan diambil alih oleh AI", "Sekolah saat ini sudah tidak lagi membutuhkan guru manusia", "Keterampilan teknologi menjadi prasyarat utama dalam dunia kerja modern", "Industri konvensional sudah benar-benar hilang dari pasar", "AI adalah satu-satunya solusi untuk mengatasi masalah administrasi"], answer: "Keterampilan teknologi menjadi prasyarat utama dalam dunia kerja modern" },
@@ -446,16 +442,16 @@
             { lvl: "SMA", type: "single", stimulus: "Hutan mangrove memiliki peran krusial dalam menjaga keseimbangan ekosistem pesisir. Akar-akar mangrove yang kokoh berfungsi sebagai pemecah gelombang alami dan mencegah abrasi. Selain itu, wilayah ini menjadi habitat bagi berbagai jenis biota laut untuk berkembang biak. Sayangnya, konversi lahan menjadi tambak udang ilegal terus mengancam keberlanjutan kawasan ini. Upaya restorasi memerlukan keterlibatan aktif masyarakat lokal agar fungsi ekologis hutan kembali pulih.", q: "Kata 'ekosistem' dalam teks tersebut memiliki makna ....", options: ["Kelompok makhluk hidup yang mendiami wilayah pesisir", "Hubungan timbal balik antara makhluk hidup dengan lingkungannya", "Sistem pertahanan pantai dari terjangan badai laut", "Cara perkembangbiakan hewan di daerah rawa bakau", "Jenis tumbuhan yang tumbuh di wilayah berair payau"], answer: "Hubungan timbal balik antara makhluk hidup dengan lingkungannya" },
             { lvl: "SMA", type: "single", stimulus: "Hutan mangrove memiliki peran krusial dalam menjaga keseimbangan ekosistem pesisir. Akar-akar mangrove yang kokoh berfungsi sebagai pemecah gelombang alami dan mencegah abrasi. Selain itu, wilayah ini menjadi habitat bagi berbagai jenis biota laut untuk berkembang biak. Sayangnya, konversi lahan menjadi tambak udang ilegal terus mengancam keberlanjutan kawasan ini. Upaya restorasi memerlukan keterlibatan aktif masyarakat lokal agar fungsi ekologis hutan kembali pulih.", q: "Berdasarkan teks tersebut, konsekuensi logis dari konversi hutan mangrove menjadi tambak udang secara liar adalah ....", options: ["Meningkatnya pendapatan ekonomi masyarakat pesisir secara permanen", "Punahnya biota laut karena kehilangan tempat berkembang biak", "Berkurangnya intensitas gelombang air laut yang menuju daratan", "Tanah di sekitar pantai akan menjadi lebih subur untuk pertanian", "Hilangnya ketergantungan masyarakat terhadap sumber daya laut"], answer: "Punahnya biota laut karena kehilangan tempat berkembang biak" },
             { lvl: "SMA", type: "single", stimulus: "Menjaga kesehatan mental di era media sosial sangatlah penting. Pengguna disarankan untuk membatasi durasi penggunaan gadget maksimal dua jam sehari. Selain itu, melakukan hobi yang tidak melibatkan layar dapat membantu menurunkan tingkat stres. Menghindari perbandingan diri dengan kehidupan orang lain yang tampak sempurna di dunia maya juga merupakan langkah preventif yang efektif. Jika merasa tertekan, berkonsultasi dengan profesional adalah tindakan yang sangat dianjurkan.", q: "Langkah preventif yang disarankan penulis untuk menjaga kesehatan mental di dunia maya adalah ....", options: ["Membeli gadget terbaru untuk menunjang produktivitas", "Memposting seluruh aktivitas harian secara konsisten", "Menghindari membandingkan diri dengan orang lain di media sosial", "Melakukan konsultasi setiap hari meskipun tidak merasa stres", "Menambah durasi penggunaan media sosial untuk mencari hiburan"], answer: "Menghindari membandingkan diri dengan orang lain di media sosial" },
-            { lvl: "SMA", type: "single", stimulus: "Laras: (Menatap amplop di tangannya) Aku tidak tahu, Mas. Uang ini bisa menyelamatkan operasi Ibu, tapi asalnya... aku ragu.\n\nBimo: Kita tidak punya pilihan lain, Laras. Waktu kita tinggal sedikit. Dokter bilang paling lambat besok.\n\nLaras: Tapi jika ini hasil dari ketidakjujuran, apakah kesembuhan Ibu akan berkah? Aku merasa seperti mengkhianati semua ajaran Ibu selama ini.", q: "Konflik batin yang dialami oleh tokoh Laras dalam kutipan drama tersebut adalah ....", options: ["Ketakutan Laras akan kegagalan operasi ibunya", "Perbedaan pendapat antara Laras dan Bimo tentang biaya rumah sakit", "Dilema antara kebutuhan biaya medis dengan prinsip moral kejujuran", "Kemarahan Laras kepada dokter karena memberi batas waktu singkat", "Kebingungan Laras dalam memilih rumah sakit terbaik untuk ibunya"], answer: "Dilema antara kebutuhan biaya medis dengan prinsip moral kejujuran" },
-            { lvl: "SMA", type: "single", stimulus: "Laras: (Menatap amplop di tangannya) Aku tidak tahu, Mas. Uang ini bisa menyelamatkan operasi Ibu, tapi asalnya... aku ragu.\n\nBimo: Kita tidak punya pilihan lain, Laras. Waktu kita tinggal sedikit. Dokter bilang paling lambat besok.\n\nLaras: Tapi jika ini hasil dari ketidakjujuran, apakah kesembuhan Ibu akan berkah? Aku merasa seperti mengkhianati semua ajaran Ibu selama ini.", q: "Nilai moral yang ingin disampaikan melalui karakter Laras dalam teks tersebut adalah ....", options: ["Kepatuhan mutlak kepada kakak adalah kunci keberhasilan keluarga", "Kejujuran harus tetap dijunjung tinggi bahkan dalam keadaan mendesak", "Kesembuhan fisik lebih penting daripada cara mendapatkan biaya", "Kita harus bergerak cepat dalam mengambil keputusan darurat", "Rasa ragu hanya akan menghambat proses penyelesaian masalah"], answer: "Kejujuran harus tetap dijunjung tinggi bahkan dalam keadaan mendesak" },
+            { lvl: "SMA", type: "single", stimulus: "Laras: (Menatap amplop di tangannya) Aku tidak tahu, Mas. Uang ini bisa menyelamatkan operasi Ibu, tapi asalnya... aku ragu.\nBimo: Kita tidak punya pilihan lain, Laras. Waktu kita tinggal sedikit. Dokter bilang paling lambat besok.\nLaras: Tapi jika ini hasil dari ketidakjujuran, apakah kesembuhan Ibu akan berkah? Aku merasa seperti mengkhianati semua ajaran Ibu selama ini.", q: "Konflik batin yang dialami oleh tokoh Laras dalam kutipan drama tersebut adalah ....", options: ["Ketakutan Laras akan kegagalan operasi ibunya", "Perbedaan pendapat antara Laras dan Bimo tentang biaya rumah sakit", "Dilema antara kebutuhan biaya medis dengan prinsip moral kejujuran", "Kemarahan Laras kepada dokter karena memberi batas waktu singkat", "Kebingungan Laras dalam memilih rumah sakit terbaik untuk ibunya"], answer: "Dilema antara kebutuhan biaya medis dengan prinsip moral kejujuran" },
+            { lvl: "SMA", type: "single", stimulus: "Laras: (Menatap amplop di tangannya) Aku tidak tahu, Mas. Uang ini bisa menyelamatkan operasi Ibu, tapi asalnya... aku ragu.\nBimo: Kita tidak punya pilihan lain, Laras. Waktu kita tinggal sedikit. Dokter bilang paling lambat besok.\nLaras: Tapi jika ini hasil dari ketidakjujuran, apakah kesembuhan Ibu akan berkah? Aku merasa seperti mengkhianati semua ajaran Ibu selama ini.", q: "Nilai moral yang ingin disampaikan melalui karakter Laras dalam teks tersebut adalah ....", options: ["Kepatuhan mutlak kepada kakak adalah kunci keberhasilan keluarga", "Kejujuran harus tetap dijunjung tinggi bahkan dalam keadaan mendesak", "Kesembuhan fisik lebih penting daripada cara mendapatkan biaya", "Kita harus bergerak cepat dalam mengambil keputusan darurat", "Rasa ragu hanya akan menghambat proses penyelesaian masalah"], answer: "Kejujuran harus tetap dijunjung tinggi bahkan dalam keadaan mendesak" },
             { lvl: "SMA", type: "single", stimulus: "Penggunaan bahasa Indonesia di ruang publik sering kali dicampuradukkan dengan istilah asing. Hal ini dianggap lebih modern oleh sebagian kalangan. Padahal, penggunaan istilah asing yang tidak tepat justru membuat pesan menjadi tidak efektif. Kita perlu menyadari bahwa bahasa Indonesia memiliki kosakata yang sangat kaya dan mampu mengekspresikan gagasan yang kompleks sekalipun. Sikap bangga berbahasa nasional harus ditanamkan sejak dini.", q: "Kata 'efektif' dalam kalimat ketiga teks tersebut memiliki sinonim ....", options: ["Singkat", "Berhasil guna", "Menarik perhatian", "Mudah diingat", "Sangat cepat"], answer: "Berhasil guna" },
             { lvl: "SMA", type: "single", stimulus: "Angin sore itu membelai lembut pucuk-pucuk padi yang mulai menguning. Sawah-sawah tampak seperti samudera emas yang berombak ditiup angin. Bagi para petani, pemandangan ini adalah jawaban dari doa-doa panjang mereka di bawah terik matahari. Namun, di balik keindahan itu, ada kecemasan akan datangnya serangan hama yang bisa menghancurkan harapan dalam semalam.", q: "Majas yang dominan ditemukan pada kalimat kedua teks tersebut adalah ....", options: ["Personifikasi", "Hiperbola", "Simile", "Metafora", "Ironi"], answer: "Metafora" },
             { lvl: "SMA", type: "single", stimulus: "Pemerintah kota berencana menambah armada bus listrik tahun depan. Langkah ini merupakan bagian dari upaya pengurangan emisi karbon. Selain itu, jalur khusus juga akan diperluas demi menjamin ketepatan waktu. Masyarakat menyambut baik rencana ini karena biaya transportasi harian diperkirakan akan turun. Diharapkan kemacetan di pusat kota dapat berkurang secara signifikan.", q: "Hubungan antara kalimat pertama dan kalimat kedua dalam teks tersebut bersifat ....", options: ["Pertentangan", "Sebab-akibat", "Penjelasan alasan", "Penambahan informasi", "Perbandingan"], answer: "Penjelasan alasan" },
             { lvl: "SMA", type: "single", stimulus: "Suara pekik 'Merdeka!' menggema di sudut-sudut pasar rakyat pagi itu. Berita tentang proklamasi telah sampai melalui telegram rahasia. Orang-orang saling berpelukan, ada air mata yang jatuh, namun ada pula tatapan waspada terhadap serdadu yang masih berjaga di pos-pos depan. Hasan segera melipat koran gelapnya, ia harus menyampaikan pesan ini ke markas di pinggir kota sebelum fajar benar-benar menyingsing.", q: "Peristiwa sejarah yang melatarbelakangi kutipan cerita tersebut adalah ....", options: ["Kedatangan tentara Jepang ke wilayah Indonesia", "Suasana sesaat setelah pembacaan Teks Proklamasi", "Perlawanan rakyat terhadap sistem tanam paksa", "Peresmian organisasi Budi Utomo di Jakarta", "Penyerahan kedaulatan Indonesia oleh Belanda"], answer: "Suasana sesaat setelah pembacaan Teks Proklamasi" },
             { lvl: "SMA", type: "single", stimulus: "Diversifikasi pangan menjadi strategi penting dalam menghadapi krisis iklim. Ketergantungan pada satu jenis makanan pokok seperti beras sangat berisiko. Tanaman lokal seperti sorgum, sagu, dan jagung memiliki ketahanan yang lebih baik terhadap cuaca ekstrem. Namun, tantangan terbesarnya adalah mengubah pola konsumsi masyarakat yang sudah terbiasa dengan nasi. Tanpa dukungan kebijakan harga dan edukasi masif, diversifikasi ini hanya akan menjadi wacana di atas kertas.", q: "Simpulan kritis terhadap argumen penulis mengenai diversifikasi pangan adalah ....", options: ["Diversifikasi pangan mustahil dilakukan karena rakyat hanya mau makan nasi", "Tanaman sorgum dan sagu tidak memiliki nilai gizi yang setara dengan beras", "Keberhasilan diversifikasi pangan sangat bergantung pada sinergi kebijakan dan perubahan budaya makan", "Pemerintah seharusnya fokus pada peningkatan produksi beras saja daripada beralih ke tanaman lain", "Krisis iklim sebenarnya tidak berpengaruh pada produksi pertanian lokal"], answer: "Keberhasilan diversifikasi pangan sangat bergantung pada sinergi kebijakan dan perubahan budaya makan" },
-            { lvl: "SMA", type: "complex", stimulus: "Sampah plastik sekali pakai masih menjadi masalah lingkungan nomor satu di Indonesia. Data menunjukkan bahwa lebih dari 60% sampah di laut adalah plastik. Mikroplastik yang terbentuk dari degradasi sampah ini kini telah ditemukan di dalam tubuh biota laut, bahkan pada manusia melalui rantai makanan. Upaya pelarangan kantong plastik di berbagai kota mulai menunjukkan hasil, namun pengelolaan sampah di tingkat rumah tangga masih sangat rendah.", q: "Berdasarkan teks tersebut, tentukan benar atau salah pernyataan-pernyataan berikut dengan memberi tanda centang pada kolom yang sesuai ....", options: ["Pernyataan 1: Mayoritas sampah yang mencemari laut terdiri atas material plastik", "Pernyataan 2: Mikroplastik hanya berbahaya bagi tumbuhan laut dan tidak berdampak pada manusia", "Pernyataan 3: Kesadaran pengelolaan sampah di tingkat rumah tangga di Indonesia sudah sangat tinggi", "Pernyataan 4: Pelarangan penggunaan kantong plastik merupakan salah satu solusi yang mulai memberikan dampak positif"], answer: [0, 3] },
+            { lvl: "SMA", type: "complex", stimulus: "Sampah plastik sekali pakai masih menjadi masalah lingkungan nomor satu di Indonesia. Data menunjukkan bahwa lebih dari 60% sampah di laut adalah plastik. Mikroplastik yang terbentuk dari degradasi sampah ini kini telah ditemukan di dalam tubuh biota laut, bahkan pada manusia melalui rantai makanan. Upaya pelarangan kantong plastik di berbagai kota mulai menunjukkan hasil, namun pengelolaan sampah di tingkat rumah tangga masih sangat rendah.", q: "Berdasarkan teks tersebut, tentukan benar atau salah pernyataan-pernyataan berikut dengan memberi tanda centang pada kolom yang sesuai ....", options: ["Pernyataan 1: Mayoritas sampah yang mencemari laut terdiri atas material plastik -> Benar", "Pernyataan 2: Mikroplastik hanya berbahaya bagi tumbuhan laut dan tidak berdampak pada manusia -> Salah", "Pernyataan 3: Kesadaran pengelolaan sampah di tingkat rumah tangga di Indonesia sudah sangat tinggi -> Salah", "Pernyataan 4: Pelarangan penggunaan kantong plastik merupakan salah satu solusi yang mulai memberikan dampak positif -> Benar"], answer: [0, 3] },
             { lvl: "SMA", type: "complex", stimulus: "Banyu adalah seorang pemuda miskin yang bekerja sebagai kuli panggul di pelabuhan. Suatu hari, ia menemukan sebuah tas berisi emas milik saudagar kaya yang tertinggal di dermaga. Meskipun ia sangat membutuhkan biaya untuk pengobatan adiknya, Banyu memilih untuk menunggu pemiliknya kembali hingga larut malam. Saat saudagar itu kembali dengan cemas, Banyu menyerahkan tas itu tanpa mengharap imbalan. Kagum akan kejujurannya, saudagar tersebut mengangkat Banyu menjadi orang kepercayaannya.", q: "Nilai-nilai kehidupan yang dapat dipetik dari perbuatan tokoh Banyu dalam kutipan tersebut adalah ....", options: ["Kejujuran akan membuahkan kepercayaan dan kebaikan di masa depan", "Sikap amanah dalam menjaga milik orang lain meskipun sedang dalam kesulitan", "Keberanian menuntut imbalan yang besar atas jasa yang telah dilakukan", "Mengutamakan kepentingan pribadi di atas norma-norma kejujuran", "Ketulusan dalam bertindak tanpa mengharapkan balasan materi"], answer: [0, 1, 4] },
-            { lvl: "SMA", type: "complex", stimulus: "Dunia literasi mengalami transformasi besar di era internet. Akses terhadap informasi menjadi lebih cepat melalui platform digital. Namun, pengguna harus memiliki kemampuan filter agar tidak terjebak dalam disinformasi. Validasi data sebelum menyebarkan berita adalah bentuk tanggung jawab sosial di ruang siber.", q: "Pasangkan kata serapan berikut dengan makna yang sesuai berdasarkan konteks teks di atas ....", options: ["Transformasi -> 1. Perubahan rupa atau bentuk", "Filter -> 2. Alat atau proses penyaringan", "Validasi -> 3. Pengesahan atau pengujian kebenaran", "Platform -> 4. Rencana kerja atau program"], answer: [0, 1, 2] },
+            { lvl: "SMA", type: "complex", stimulus: "Dunia literasi mengalami transformasi besar di era internet. Akses terhadap informasi menjadi lebih cepat melalui platform digital. Namun, pengguna harus memiliki kemampuan filter agar tidak terjebak dalam disinformasi. Validasi data sebelum menyebarkan berita adalah bentuk tanggung jawab sosial di ruang siber.", q: "Pasangkan kata serapan berikut dengan makna yang sesuai berdasarkan konteks teks di atas ....", options: ["Transformasi -> Perubahan rupa atau bentuk", "Filter -> Alat atau proses penyaringan", "Validasi -> Pengesahan atau pengujian kebenaran", "Platform -> Rencana kerja atau program"], answer: [0, 1, 2] },
             { lvl: "SMA", type: "complex", stimulus: "(1) Konsumsi gula berlebih merupakan penyebab utama diabetes tipe 2 di kalangan remaja. (2) Berdasarkan data Kemenkes, angka penderita diabetes usia muda naik 10% tahun ini. (3) Seharusnya pemerintah melarang total penjualan minuman manis di lingkungan sekolah. (4) Rasa manis dari buah-buahan jauh lebih nikmat daripada pemanis buatan.", q: "Tentukan kategori dari setiap kalimat di atas dengan memilih kolom Fakta atau Opini ....", options: ["Kalimat (1): Fakta", "Kalimat (2): Fakta", "Kalimat (3): Opini", "Kalimat (4): Opini"], answer: [0, 1, 2, 3] },
             { lvl: "SMA", type: "complex", stimulus: "Energi terbarukan seperti panel surya adalah solusi terbaik untuk krisis listrik di daerah terpencil. Meskipun biaya instalasi awalnya cukup mahal, biaya operasional jangka panjangnya hampir nol. Namun, beberapa pihak menilai panel surya tidak efektif di daerah yang sering mendung. Padahal, teknologi panel surya terbaru tetap dapat menghasilkan listrik meskipun dalam kondisi cahaya rendah. Oleh karena itu, keraguan terhadap efektivitasnya di daerah tropis tidaklah beralasan.", q: "Pilih pernyataan-pernyataan yang mendukung argumen penulis bahwa panel surya efektif digunakan di Indonesia ....", options: ["Teknologi panel surya terbaru tetap bisa berfungsi meski cahaya matahari redup.", "Biaya pemasangan awal panel surya sangat murah bagi masyarakat miskin.", "Indonesia berada di daerah tropis dengan paparan cahaya matahari sepanjang tahun.", "Biaya operasional jangka panjang yang sangat rendah membantu ekonomi daerah.", "Panel surya tidak memerlukan perawatan sama sekali selama 20 tahun."], answer: [0, 2, 3] },
 
@@ -493,14 +489,6 @@
             isGameOver: false
         };
 
-        // SFX Library (Google Actions Sounds - Sangat Stabil)
-        const SFX_URLS = {
-            'correct': 'https://actions.google.com/sounds/v1/cartoon/bell_ding.ogg',
-            'wrong': 'https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg',
-            'merge': 'https://actions.google.com/sounds/v1/cartoon/pop.ogg',
-            'coin': 'https://actions.google.com/sounds/v1/cartoon/magic_chime_cord.ogg'
-        };
-
         // UI Update Lobby
         function updatePlayerNames() {
             const num = parseInt(document.getElementById('select-players').value);
@@ -513,13 +501,12 @@
 
         let isMuted = false;
         
-        function playSound(type) {
+        function playSound(id) {
             if (isMuted) return;
-            const url = SFX_URLS[type];
-            if (url) {
-                const audio = new Audio(url);
-                audio.volume = 0.8; // Volume SFX sedikit dikeraskan
-                audio.play().catch(e => console.log("SFX play prevented:", e));
+            const audio = document.getElementById(`sfx-${id}`);
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log("Audio play error:", e));
             }
         }
 
@@ -551,25 +538,36 @@
 
         function toggleMute() {
             const bgm = document.getElementById('bgm-audio');
-            const slider = document.getElementById('bgm-volume');
             isMuted = !isMuted;
             bgm.muted = isMuted;
             
-            if (isMuted) {
-                document.getElementById('btn-mute').innerText = '🔇';
-                slider.classList.add('opacity-50');
-            } else {
-                document.getElementById('btn-mute').innerText = '🔊';
-                slider.classList.remove('opacity-50');
-                bgm.play().catch(e => console.log(e));
-            }
+            // Perbarui semua tombol mute jika ada
+            const muteBtns = document.querySelectorAll('.btn-mute-class');
+            const sliders = document.querySelectorAll('.bgm-volume-class');
+            
+            muteBtns.forEach(btn => btn.innerText = isMuted ? '🔇' : '🔊');
+            
+            sliders.forEach(slider => {
+                if (isMuted) slider.classList.add('opacity-50');
+                else slider.classList.remove('opacity-50');
+            });
+            
+            if (!isMuted) bgm.play().catch(e => console.log(e));
         }
 
         function changeVolume(val) {
             const bgm = document.getElementById('bgm-audio');
             bgm.volume = parseFloat(val);
             
-            // Auto unmute jika volume dibesarkan dari 0
+            const sfxVolume = Math.min(1, parseFloat(val) + 0.3);
+            ['sfx-correct', 'sfx-wrong', 'sfx-merge', 'sfx-coin'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.volume = sfxVolume;
+            });
+            
+            const sliders = document.querySelectorAll('.bgm-volume-class');
+            sliders.forEach(slider => slider.value = val);
+            
             if (val > 0 && isMuted) {
                 toggleMute();
             }
@@ -633,7 +631,7 @@
             }
 
             const mainContainer = document.getElementById('main-container');
-            mainContainer.className = `flex-1 w-full h-full p-2 grid gap-2 overflow-hidden z-10 relative pt-16 grid-layout-${startConfig.players}`;
+            mainContainer.className = `flex-1 w-full h-full p-2 grid gap-2 overflow-hidden z-10 relative grid-layout-${startConfig.players}`;
             mainContainer.innerHTML = globalState.players.map(p => generatePlayerUI(p)).join('');
 
             globalState.players.forEach(p => {
@@ -661,7 +659,7 @@
                     
                     <div id="quiz-container-${p.index}" class="absolute inset-0 z-50 hidden"></div>
 
-                    <!-- HEADER PEMAIN -->
+                    <!-- HEADER PEMAIN & KONTROL GLOBAL DI TENGAH -->
                     <div class="bg-white/95 p-1.5 md:p-2 border-b-2 border-slate-200 flex justify-between items-center shrink-0 z-10 h-14 md:h-16">
                         
                         <!-- Kiri: Info Pemain -->
@@ -670,6 +668,21 @@
                             <span id="p${p.index}-level" class="text-[10px] md:text-xs font-bold bg-indigo-500 text-white px-2 py-0.5 rounded-full w-max">LVL ${p.level}</span>
                         </div>
                         
+                        <!-- Tengah: Kontrol Global (Hanya ditaruh di Pemain 1 agar tidak ganda di layar) -->
+                        <div class="flex-1 flex justify-center items-center shrink-0">
+                            ${p.index === 0 ? `
+                            <div class="flex items-center gap-1 md:gap-3 bg-slate-100 px-3 py-1 rounded-full border border-slate-300 shadow-inner scale-90 md:scale-100">
+                                <div class="flex items-center gap-1">
+                                    <button onclick="toggleMute()" class="btn-mute-class w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-lg" title="Mute/Unmute">🔊</button>
+                                    <input type="range" min="0" max="1" step="0.05" value="0.5" class="bgm-volume-class w-16 md:w-24 accent-blue-500 cursor-pointer" oninput="changeVolume(this.value)" title="Volume Musik">
+                                </div>
+                                <div class="w-px h-5 bg-slate-300"></div>
+                                <button onclick="goHome()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-lg" title="Kembali ke Menu (Home)">🏠</button>
+                                <button onclick="toggleFullscreen()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition active:scale-95 text-lg group" title="Layar Penuh">📺</button>
+                            </div>
+                            ` : ''}
+                        </div>
+
                         <!-- Kanan: Koin & Energi -->
                         <div class="flex gap-1 md:gap-2 items-center justify-end flex-1">
                             <div class="flex items-center bg-yellow-100 px-2 py-1 rounded-full shadow-inner border border-yellow-200 h-max">
@@ -759,7 +772,6 @@
             
             let randomItem = null;
             
-            // 1. Peluang 30% memunculkan BAHAN DASAR (Level 1) yang sesuai dengan pesanan karakter
             if (Math.random() < 0.30) {
                 const neededChains = [];
                 p.orders.forEach(order => {
@@ -777,7 +789,6 @@
                 }
             }
             
-            // 2. Jika bukan pesanan karakter, probabilitas merata (0,2) untuk semua bahan dasar
             if (!randomItem) {
                 const rand = Math.random(); 
                 if (rand < 0.2) randomItem = CHAINS.roti[0];
@@ -1210,7 +1221,7 @@
             if (filteredQuizzes.length === 0) filteredQuizzes = ALL_QUIZZES; 
             const quiz = filteredQuizzes[Math.floor(Math.random() * filteredQuizzes.length)];
             
-            // Extract stimulus and question (kompatibel untuk data lama & baru)
+            // Extract stimulus and question
             let stimulusText = quiz.stimulus || "";
             let questionText = quiz.q || "";
             
@@ -1227,7 +1238,6 @@
             const optContainer = tpl.querySelector('.quiz-options');
             optContainer.innerHTML = '';
             
-            // Atur lebar jika tidak ada stimulus sama sekali
             if (stimulusText.trim() === "") {
                 tpl.querySelector('.quiz-stimulus').parentElement.classList.add('hidden');
                 tpl.querySelector('.quiz-question').parentElement.classList.remove('md:w-[55%]');
@@ -1269,7 +1279,6 @@
                 submitBtn.onclick = () => {
                     const checkedBoxes = Array.from(optContainer.querySelectorAll('.complex-cb:checked')).map(cb => parseInt(cb.value));
                     
-                    // Cek kebenaran opsi kompleks (harus sama persis dengan kunci)
                     const isCorrect = checkedBoxes.length === quiz.answer.length && 
                                       checkedBoxes.every(val => quiz.answer.includes(val));
                     
